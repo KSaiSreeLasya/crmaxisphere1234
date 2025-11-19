@@ -280,9 +280,7 @@ export default function AdminDashboard() {
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-foreground">Leads</h2>
               <button
-                onClick={() => {
-                  setShowLeadsForm(true);
-                }}
+                onClick={() => navigate("/leads/add")}
                 className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity font-medium"
               >
                 <Plus className="w-5 h-5" />
