@@ -250,11 +250,11 @@ export default function AddLeadsPage() {
       emails: [...formData.emails, trimmedEmail],
     });
     setEmailInput("");
-    // Only clear contact error
-    setErrors((prev) => {
-      const { contact, ...rest } = prev;
-      return rest;
-    });
+    // Clear contact error since we have a valid email
+    setErrors((prev) => ({
+      ...prev,
+      contact: "",
+    }));
   };
 
   const addPhone = () => {
