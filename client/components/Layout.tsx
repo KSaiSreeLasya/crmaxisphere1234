@@ -57,11 +57,13 @@ export default function Layout({ children, showSidebar = true }: LayoutProps) {
       <header className="border-b border-border bg-white sticky top-0 z-40">
         <div className="flex items-center justify-between h-16 px-6">
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center text-white font-bold text-sm">
-              AS
-            </div>
+            <img
+              src="https://cdn.builder.io/api/v1/image/assets%2Fc74248048c80462f93d5f4025f650682%2Fc2993ec3161b4da2bec916066d5b8ea1?format=webp&width=800"
+              alt="Axisphere"
+              className="w-8 h-8 rounded-lg"
+            />
             <span className="font-bold text-lg text-foreground hidden sm:block">
-              Axisphere CRM
+              AXISPHERE CRM
             </span>
           </Link>
 
