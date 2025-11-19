@@ -60,40 +60,94 @@ export default function AddSalesPersonPage() {
 
     setLoading(true);
     try {
+      // Verify admin is authenticated
+      if (!user?.id) {
+        throw new Error(
+          "You must be logged in to add a sales person. Please refresh the page."
+        );
+      }
+
+      const firstName = formData.name.split(" ")[0];
+      const lastName = formData.name.split(" ").slice(1).join(" ") || "";
+
+      console.log("Creating sales person:", {
+        email: formData.email,
+        name: formData.name,
+      });
+
       // Create user account first
       const { data: userData, error: userError } = await supabase
         .from("users")
         .insert({
           email: formData.email,
           password_hash: formData.password,
-          first_name: formData.name.split(" ")[0],
-          last_name: formData.name.split(" ").slice(1).join(" ") || "",
+          first_name: firstName,
+          last_name: lastName,
           role: "sales",
           is_active: true,
         })
         .select()
         .single();
 
-      if (userError) throw userError;
+      if (userError) {
+        console.error("User creation error:", {
+          message: userError.message,
+          code: (userError as any).code,
+          details: (userError as any).details,
+        });
+        throw new Error(userError.message || "Failed to create user account");
+      }
 
-      // Create sales person
-      await supabase.from("sales_persons").insert({
-        user_id: userData.id,
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        status: "active",
-        created_by: user?.id,
-      });
+      if (!userData?.id) {
+        throw new Error("User was created but no ID was returned");
+      }
 
+      // Create sales person record
+      const { error: spError } = await supabase
+        .from("sales_persons")
+        .insert({
+          user_id: userData.id,
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          status: "active",
+          created_by: user.id,
+        });
+
+      if (spError) {
+        console.error("Sales person creation error:", {
+          message: spError.message,
+          code: (spError as any).code,
+          details: (spError as any).details,
+        });
+        throw new Error(
+          spError.message || "Failed to create sales person record"
+        );
+      }
+
+      console.log("Sales person created successfully");
       navigate("/admin");
     } catch (error) {
-      console.error("Error adding sales person:", error);
+      let errorMessage = "Failed to add sales person. Please try again.";
+
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === "object" && error !== null) {
+        const err = error as any;
+        if (err.message) {
+          errorMessage = err.message;
+        } else if (err.error_description) {
+          errorMessage = err.error_description;
+        } else if (err.hint) {
+          errorMessage = err.hint;
+        } else {
+          errorMessage = JSON.stringify(err);
+        }
+      }
+
+      console.error("Full error object:", error);
       setErrors({
-        submit:
-          error instanceof Error
-            ? error.message
-            : "Failed to add sales person. Please try again.",
+        submit: errorMessage,
       });
     } finally {
       setLoading(false);
