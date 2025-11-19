@@ -235,12 +235,12 @@ export default function AddLeadsPage() {
     if (!trimmedEmail) return;
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
-      setErrors({ emails: "Please enter a valid email address" });
+      setErrors({ ...errors, email: "Please enter a valid email address" });
       return;
     }
 
     if (formData.emails.includes(trimmedEmail)) {
-      setErrors({ emails: "This email is already added" });
+      setErrors({ ...errors, email: "This email is already added" });
       return;
     }
 
@@ -250,10 +250,8 @@ export default function AddLeadsPage() {
       emails: updatedEmails,
     });
     setEmailInput("");
-    setErrors((prev) => {
-      const { contact, ...rest } = prev;
-      return rest;
-    });
+    // Clear all errors when contact is added
+    setErrors({});
   };
 
   const addPhone = () => {
