@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { X, Plus, Trash2 } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
 interface Lead {
   id?: string;
@@ -14,6 +15,16 @@ interface Lead {
   keywords: string[];
   links: string[];
   actions: string;
+  statusId?: string;
+  nextReminder?: string;
+  note?: string;
+}
+
+interface LeadStatus {
+  id: string;
+  name: string;
+  order_index: number;
+  color: string;
 }
 
 interface LeadsFormProps {
@@ -40,6 +51,9 @@ export default function LeadsForm({
       keywords: [],
       links: [],
       actions: "",
+      statusId: "",
+      nextReminder: "",
+      note: "",
     },
   );
 
@@ -49,6 +63,23 @@ export default function LeadsForm({
   const [industryInput, setIndustryInput] = useState("");
   const [keywordInput, setKeywordInput] = useState("");
   const [linkInput, setLinkInput] = useState("");
+  const [statuses, setStatuses] = useState<LeadStatus[]>([]);
+
+  useEffect(() => {
+    fetchStatuses();
+  }, []);
+
+  const fetchStatuses = async () => {
+    try {
+      const { data } = await supabase
+        .from("lead_status_pipeline")
+        .select("*")
+        .order("order_index");
+      if (data) setStatuses(data);
+    } catch (error) {
+      console.error("Error fetching statuses:", error);
+    }
+  };
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -494,6 +525,59 @@ export default function LeadsForm({
                 ))}
               </div>
             </div>
+          </div>
+
+          {/* Lead Status and Reminder */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-1">
+                Status
+              </label>
+              <select
+                value={formData.statusId}
+                onChange={(e) =>
+                  setFormData({ ...formData, statusId: e.target.value })
+                }
+                className="w-full px-3 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-background text-foreground"
+              >
+                <option value="">Select status</option>
+                {statuses.map((status) => (
+                  <option key={status.id} value={status.id}>
+                    {status.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-1">
+                Next Reminder
+              </label>
+              <input
+                type="date"
+                value={formData.nextReminder}
+                onChange={(e) =>
+                  setFormData({ ...formData, nextReminder: e.target.value })
+                }
+                className="w-full px-3 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-background text-foreground"
+              />
+            </div>
+          </div>
+
+          {/* Notes */}
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-1">
+              Note
+            </label>
+            <textarea
+              value={formData.note}
+              onChange={(e) =>
+                setFormData({ ...formData, note: e.target.value })
+              }
+              className="w-full px-3 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-background text-foreground"
+              placeholder="Add any notes about this lead"
+              rows={2}
+            />
           </div>
 
           {/* Actions */}

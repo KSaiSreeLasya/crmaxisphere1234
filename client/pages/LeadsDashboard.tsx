@@ -30,6 +30,8 @@ interface Lead {
   status_id: string;
   assigned_to?: string;
   notes?: string;
+  next_reminder?: string;
+  note?: string;
 }
 
 interface LeadsByStatus {
@@ -99,8 +101,9 @@ export default function LeadsDashboard() {
 
   const handleAddLead = async (data: any) => {
     try {
-      const noStageStatus = statuses.find((s) => s.name === "No Stage");
-      if (!noStageStatus) return;
+      const statusId =
+        data.statusId || statuses.find((s) => s.name === "No Stage")?.id;
+      if (!statusId) return;
 
       await supabase.from("leads").insert({
         name: data.name,
@@ -111,8 +114,9 @@ export default function LeadsDashboard() {
         industries: data.industries,
         keywords: data.keywords,
         links: data.links,
-        notes: data.actions,
-        status_id: noStageStatus.id,
+        notes: data.note || data.actions,
+        next_reminder: data.nextReminder || null,
+        status_id: statusId,
         created_by: user?.id,
       });
 
@@ -260,6 +264,21 @@ export default function LeadsDashboard() {
                           <p className="text-foreground">
                             <span className="font-medium">Phone:</span>{" "}
                             {lead.phone}
+                          </p>
+                        )}
+                        {lead.note && (
+                          <p className="text-foreground">
+                            <span className="font-medium">Note:</span>{" "}
+                            {lead.note}
+                          </p>
+                        )}
+                        {lead.next_reminder && (
+                          <p className="text-foreground flex items-center gap-1">
+                            <Clock className="w-4 h-4" />
+                            <span className="font-medium">
+                              Next Reminder:
+                            </span>{" "}
+                            {new Date(lead.next_reminder).toLocaleDateString()}
                           </p>
                         )}
                       </div>

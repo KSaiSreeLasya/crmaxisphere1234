@@ -1,7 +1,55 @@
 import Layout from "@/components/Layout";
-import { Users, Target, TrendingUp, Award } from "lucide-react";
+import {
+  Users,
+  Target,
+  TrendingUp,
+  Award,
+  Clock,
+  AlertCircle,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/context/AuthContext";
+
+interface Reminder {
+  id: string;
+  name: string;
+  company: string;
+  next_reminder: string;
+  job_title: string;
+}
 
 export default function SalesDashboard() {
+  const { user } = useAuth();
+  const [upcomingReminders, setUpcomingReminders] = useState<Reminder[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (user?.id) {
+      fetchUpcomingReminders();
+    }
+  }, [user?.id]);
+
+  const fetchUpcomingReminders = async () => {
+    try {
+      const { data } = await supabase
+        .from("leads")
+        .select("id, name, company, next_reminder, job_title")
+        .eq("created_by", user?.id)
+        .not("next_reminder", "is", null)
+        .gte("next_reminder", new Date().toISOString().split("T")[0])
+        .order("next_reminder", { ascending: true })
+        .limit(5);
+
+      if (data) {
+        setUpcomingReminders(data);
+      }
+    } catch (error) {
+      console.error("Error fetching reminders:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
   const salesStats = [
     {
       label: "Total Sales Persons",
@@ -84,6 +132,39 @@ export default function SalesDashboard() {
             Monitor sales team performance and metrics
           </p>
         </div>
+
+        {/* Upcoming Reminders */}
+        {upcomingReminders.length > 0 && (
+          <div className="mb-8 bg-blue-50 border border-blue-200 rounded-xl p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <Clock className="w-5 h-5 text-blue-600" />
+              <h2 className="text-lg font-semibold text-blue-900">
+                Upcoming Reminders
+              </h2>
+            </div>
+            <div className="space-y-2">
+              {upcomingReminders.map((reminder) => (
+                <div
+                  key={reminder.id}
+                  className="flex items-center justify-between bg-white p-3 rounded-lg border border-blue-100"
+                >
+                  <div>
+                    <p className="font-medium text-foreground">
+                      {reminder.name}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {reminder.company}
+                      {reminder.job_title && ` • ${reminder.job_title}`}
+                    </p>
+                  </div>
+                  <p className="text-sm font-medium text-blue-600">
+                    {new Date(reminder.next_reminder).toLocaleDateString()}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
