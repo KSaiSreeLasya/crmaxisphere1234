@@ -12,6 +12,54 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export const handleSeed: RequestHandler = async (req, res) => {
   try {
+    // Create tables using raw SQL if they don't exist
+    const createTablesSQL = `
+      CREATE TABLE IF NOT EXISTS packages (
+        id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        price DECIMAL(10, 2) NOT NULL,
+        description TEXT,
+        features JSONB DEFAULT '[]',
+        is_active BOOLEAN DEFAULT true,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      );
+
+      CREATE TABLE IF NOT EXISTS invoices (
+        id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+        invoice_number VARCHAR(50) NOT NULL UNIQUE,
+        customer_name VARCHAR(255) NOT NULL,
+        customer_email VARCHAR(255),
+        customer_phone VARCHAR(20),
+        company_name VARCHAR(255),
+        package_id UUID NOT NULL REFERENCES packages(id),
+        base_price DECIMAL(10, 2) NOT NULL,
+        gst_percentage DECIMAL(5, 2) DEFAULT 18,
+        gst_amount DECIMAL(10, 2),
+        total_amount DECIMAL(10, 2) NOT NULL,
+        additional_notes TEXT,
+        created_by UUID NOT NULL REFERENCES users(id),
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      );
+
+      CREATE INDEX IF NOT EXISTS idx_invoices_invoice_number ON invoices(invoice_number);
+      CREATE INDEX IF NOT EXISTS idx_invoices_created_by ON invoices(created_by);
+      CREATE INDEX IF NOT EXISTS idx_invoices_created_at ON invoices(created_at);
+      CREATE INDEX IF NOT EXISTS idx_invoices_package_id ON invoices(package_id);
+    `;
+
+    // Try to execute the SQL using Supabase RPC or direct query
+    // Since Supabase RPC might not support raw SQL, we'll try it
+    try {
+      await supabase.rpc("create_tables", {
+        sql: createTablesSQL,
+      });
+    } catch (rpcError) {
+      // RPC might not exist, so we'll skip it and let manual SQL migration happen
+      console.warn("Could not execute table creation via RPC. Please run SQL migration manually.");
+    }
+
     // Check if admin user already exists
     const { data: existingAdmins, error: checkError } = await supabase
       .from("users")
