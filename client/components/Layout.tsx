@@ -1,7 +1,8 @@
 import { ReactNode } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Users, TrendingUp, LineChart, BarChart3, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/context/AuthContext";
 
 interface LayoutProps {
   children: ReactNode;
@@ -10,6 +11,8 @@ interface LayoutProps {
 
 export default function Layout({ children, showSidebar = true }: LayoutProps) {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
   const navItems = [
     {
@@ -21,6 +24,7 @@ export default function Layout({ children, showSidebar = true }: LayoutProps) {
       label: "Sales Persons",
       href: "/admin/sales-persons",
       icon: Users,
+      adminOnly: true,
     },
     {
       label: "Leads",
@@ -32,9 +36,14 @@ export default function Layout({ children, showSidebar = true }: LayoutProps) {
       href: "/admin/analytics",
       icon: LineChart,
     },
-  ];
+  ].filter((item) => !item.adminOnly || user?.role === "admin");
 
   const isActive = (href: string) => location.pathname === href;
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/login");
+  };
 
   return (
     <div className="min-h-screen bg-background">
