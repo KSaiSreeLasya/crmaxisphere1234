@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/context/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 import {
   Plus,
   TrendingUp,
@@ -11,6 +13,7 @@ import {
   AlertCircle,
   Edit,
   Trash2,
+  Users,
 } from "lucide-react";
 
 interface LeadStatus {
