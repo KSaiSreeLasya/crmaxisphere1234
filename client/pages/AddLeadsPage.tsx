@@ -493,11 +493,6 @@ export default function AddLeadsPage() {
                     </div>
                   ))}
                 </div>
-                {errors.emails && (
-                  <p className="text-sm text-destructive mt-1">
-                    {errors.emails}
-                  </p>
-                )}
               </div>
 
               <div>
