@@ -549,8 +549,8 @@ export default function LeadsForm({
             </div>
           </div>
 
-          {/* Lead Status and Reminder */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Lead Status, Assign To and Reminder */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium text-foreground mb-1">
                 Status
@@ -566,6 +566,26 @@ export default function LeadsForm({
                 {statuses.map((status) => (
                   <option key={status.id} value={status.id}>
                     {status.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-1">
+                Assign To
+              </label>
+              <select
+                value={formData.assigned_to || ""}
+                onChange={(e) =>
+                  setFormData({ ...formData, assigned_to: e.target.value })
+                }
+                className="w-full px-3 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-background text-foreground"
+              >
+                <option value="">Unassigned</option>
+                {salesPersons.map((person) => (
+                  <option key={person.id} value={person.id}>
+                    {person.name}
                   </option>
                 ))}
               </select>
