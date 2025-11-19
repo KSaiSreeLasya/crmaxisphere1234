@@ -99,58 +99,6 @@ export default function LeadsDashboard() {
     }
   };
 
-  const handleAddLead = async (data: any) => {
-    try {
-      const statusId =
-        data.statusId || statuses.find((s) => s.name === "No Stage")?.id;
-      if (!statusId) return;
-
-      await supabase.from("leads").insert({
-        name: data.name,
-        company: data.company,
-        job_title: data.jobTitle,
-        location: data.location,
-        company_size: data.companySize,
-        industries: data.industries,
-        keywords: data.keywords,
-        links: data.links,
-        notes: data.note || data.actions,
-        next_reminder: data.nextReminder || null,
-        status_id: statusId,
-        created_by: user?.id,
-      });
-
-      // Add emails
-      const lastLeadResponse = await supabase
-        .from("leads")
-        .select("id")
-        .eq("created_by", user?.id)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .single();
-
-      if (lastLeadResponse.data?.id) {
-        for (const email of data.emails) {
-          await supabase.from("lead_emails").insert({
-            lead_id: lastLeadResponse.data.id,
-            email,
-          });
-        }
-        for (const phone of data.phones) {
-          await supabase.from("lead_phones").insert({
-            lead_id: lastLeadResponse.data.id,
-            phone,
-          });
-        }
-      }
-
-      setShowForm(false);
-      fetchLeads();
-    } catch (error) {
-      console.error("Error adding lead:", error);
-    }
-  };
-
   const getStatusColor = (color: string) => {
     const colorMap: Record<string, string> = {
       gray: "bg-gray-100 text-gray-800",
