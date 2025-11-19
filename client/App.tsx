@@ -18,6 +18,9 @@ import AddLeadsPage from "./pages/AddLeadsPage";
 import AddSalesPersonPage from "./pages/AddSalesPersonPage";
 import SalesDashboard from "./pages/SalesDashboard";
 import AnalyticsDashboard from "./pages/AnalyticsDashboard";
+import InvoiceList from "./pages/InvoiceList";
+import CreateInvoice from "./pages/CreateInvoice";
+import InvoiceDetail from "./pages/InvoiceDetail";
 
 const queryClient = new QueryClient();
 
