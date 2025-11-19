@@ -75,43 +75,6 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleAddSalesPerson = async (data: any) => {
-    try {
-      // Create user account first
-      const userResult = await supabase.from("users").insert({
-        email: data.email,
-        password_hash: data.password,
-        first_name: data.name.split(" ")[0],
-        last_name: data.name.split(" ").slice(1).join(" ") || "",
-        role: "sales",
-        is_active: true,
-      });
-
-      if (userResult.error) throw userResult.error;
-
-      // Get the created user
-      const { data: createdUser } = await supabase
-        .from("users")
-        .select("id")
-        .eq("email", data.email)
-        .single();
-
-      // Create sales person
-      await supabase.from("sales_persons").insert({
-        user_id: createdUser?.id,
-        name: data.name,
-        email: data.email,
-        phone: data.phone,
-        status: "active",
-        created_by: user?.id,
-      });
-
-      setShowSalesPersonForm(false);
-      fetchData();
-    } catch (error) {
-      console.error("Error adding sales person:", error);
-    }
-  };
 
   const handleDeleteSalesPerson = async (id: string) => {
     try {
