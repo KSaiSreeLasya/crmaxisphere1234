@@ -244,15 +244,15 @@ export default function AddLeadsPage() {
       return;
     }
 
+    const updatedEmails = [...formData.emails, trimmedEmail];
     setFormData({
       ...formData,
-      emails: [...formData.emails, trimmedEmail],
+      emails: updatedEmails,
     });
     setEmailInput("");
     setErrors((prev) => {
-      const newErrors = { ...prev };
-      delete newErrors.contact;
-      return newErrors;
+      const { contact, ...rest } = prev;
+      return rest;
     });
   };
 
