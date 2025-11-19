@@ -36,8 +36,9 @@ interface Lead {
   note?: string;
 }
 
-interface LeadsByStatus {
-  [key: string]: Lead[];
+interface SalesPerson {
+  id: string;
+  name: string;
 }
 
 export default function LeadsDashboard() {
