@@ -129,7 +129,11 @@ export default function AdminDashboard() {
       <div className="min-h-screen bg-gray-50 p-6">
         <div className="max-w-7xl mx-auto">
           {/* Tabs Navigation */}
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <Tabs
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className="w-full"
+          >
             <div className="bg-white rounded-t-lg border border-b-0 border-gray-200 mb-0">
               <TabsList className="w-full justify-start rounded-none bg-transparent p-0">
                 <TabsTrigger
@@ -243,7 +247,9 @@ export default function AdminDashboard() {
                     <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
                       <Bell className="w-6 h-6 text-green-600" />
                     </div>
-                    <p className="text-gray-600 font-medium">No upcoming reminders</p>
+                    <p className="text-gray-600 font-medium">
+                      No upcoming reminders
+                    </p>
                     <p className="text-gray-400 text-sm">
                       All your tasks are up to date
                     </p>
@@ -413,7 +419,9 @@ export default function AdminDashboard() {
                           ).length
                         }
                       </p>
-                      <p className="text-gray-500 text-sm mt-2">Leads with Email</p>
+                      <p className="text-gray-500 text-sm mt-2">
+                        Leads with Email
+                      </p>
                     </div>
                     <div className="text-center">
                       <p className="text-3xl font-bold text-gray-900">
@@ -425,7 +433,9 @@ export default function AdminDashboard() {
                           ).length
                         }
                       </p>
-                      <p className="text-gray-500 text-sm mt-2">Leads with Phone</p>
+                      <p className="text-gray-500 text-sm mt-2">
+                        Leads with Phone
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -491,8 +501,8 @@ export default function AdminDashboard() {
                           )}
                           <div className="mt-4 pt-4 border-t border-gray-200">
                             <p className="text-sm text-gray-700">
-                              <span className="font-medium">{personLeads}</span> leads
-                              assigned
+                              <span className="font-medium">{personLeads}</span>{" "}
+                              leads assigned
                             </p>
                             <p className="text-sm text-gray-600 mt-1">
                               Status:{" "}

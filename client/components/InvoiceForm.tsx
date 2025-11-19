@@ -82,7 +82,7 @@ export default function InvoiceForm({ onSuccess, onCancel }: InvoiceFormProps) {
   };
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -133,7 +133,7 @@ export default function InvoiceForm({ onSuccess, onCancel }: InvoiceFormProps) {
       }
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Failed to create invoice"
+        error instanceof Error ? error.message : "Failed to create invoice",
       );
       console.error(error);
     } finally {
@@ -312,8 +312,7 @@ export default function InvoiceForm({ onSuccess, onCancel }: InvoiceFormProps) {
                     ₹
                     {(
                       selectedPackage.price_inr +
-                      (selectedPackage.price_inr *
-                        formData.gst_percentage) /
+                      (selectedPackage.price_inr * formData.gst_percentage) /
                         100
                     ).toLocaleString("en-IN", {
                       maximumFractionDigits: 2,

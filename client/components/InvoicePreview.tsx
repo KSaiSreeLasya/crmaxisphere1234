@@ -144,9 +144,7 @@ export default function InvoicePreview({
               Back
             </Button>
           )}
-          <span className="text-sm text-gray-600">
-            Page {currentPage} of 2
-          </span>
+          <span className="text-sm text-gray-600">Page {currentPage} of 2</span>
         </div>
         <div className="flex items-center gap-4">
           <Button
@@ -203,11 +201,7 @@ export default function InvoicePreview({
         className="bg-white"
         style={{ display: currentPage === 2 ? "block" : "none" }}
       >
-        <InvoicePage2
-          invoice={invoice}
-          pkg={pkg}
-          companyName={COMPANY_NAME}
-        />
+        <InvoicePage2 invoice={invoice} pkg={pkg} companyName={COMPANY_NAME} />
       </div>
 
       {/* Hidden full PDF container for download */}
@@ -219,11 +213,7 @@ export default function InvoicePreview({
           companyName={COMPANY_NAME}
         />
         <div style={{ pageBreakAfter: "always" }}></div>
-        <InvoicePage2
-          invoice={invoice}
-          pkg={pkg}
-          companyName={COMPANY_NAME}
-        />
+        <InvoicePage2 invoice={invoice} pkg={pkg} companyName={COMPANY_NAME} />
       </div>
 
       {/* Page Navigation */}
@@ -236,9 +226,7 @@ export default function InvoicePreview({
         >
           <ChevronLeft className="w-4 h-4" />
         </Button>
-        <span className="text-sm text-gray-600">
-          Page {currentPage} of 2
-        </span>
+        <span className="text-sm text-gray-600">Page {currentPage} of 2</span>
         <Button
           onClick={() => setCurrentPage(Math.min(2, currentPage + 1))}
           disabled={currentPage === 2}
@@ -264,7 +252,10 @@ function InvoicePage1({
   companyName: string;
 }) {
   return (
-    <div className="p-12 min-h-screen border border-gray-200 rounded-lg bg-white" style={{ pageBreakAfter: "always" }}>
+    <div
+      className="p-12 min-h-screen border border-gray-200 rounded-lg bg-white"
+      style={{ pageBreakAfter: "always" }}
+    >
       {/* Header */}
       <div className="flex items-center justify-between mb-8 pb-6 border-b-2 border-gray-200">
         <div className="flex items-center gap-4">
@@ -288,17 +279,19 @@ function InvoicePage1({
       {/* Customer Information */}
       <div className="grid grid-cols-2 gap-8 mb-8">
         <div>
-          <h3 className="text-sm font-semibold text-gray-600 mb-3">
-            BILL TO:
-          </h3>
+          <h3 className="text-sm font-semibold text-gray-600 mb-3">BILL TO:</h3>
           <div className="space-y-1">
-            <p className="font-semibold text-gray-900">{invoice.customer_name}</p>
+            <p className="font-semibold text-gray-900">
+              {invoice.customer_name}
+            </p>
             <p className="text-sm text-gray-600">{invoice.customer_email}</p>
             {invoice.customer_phone && (
               <p className="text-sm text-gray-600">{invoice.customer_phone}</p>
             )}
             {invoice.customer_company && (
-              <p className="text-sm text-gray-600">{invoice.customer_company}</p>
+              <p className="text-sm text-gray-600">
+                {invoice.customer_company}
+              </p>
             )}
           </div>
         </div>
@@ -318,7 +311,8 @@ function InvoicePage1({
             <p>
               <span className="font-semibold">Due Date:</span>{" "}
               {new Date(
-                new Date(invoice.created_at).getTime() + 30 * 24 * 60 * 60 * 1000
+                new Date(invoice.created_at).getTime() +
+                  30 * 24 * 60 * 60 * 1000,
               ).toLocaleDateString("en-IN")}
             </p>
           </div>
@@ -421,13 +415,19 @@ function InvoicePage2({
                 GST ({invoice.gst_percentage}%)
               </td>
               <td className="py-3 text-right font-semibold text-gray-900">
-                ₹{invoice.gst_amount?.toLocaleString("en-IN", { maximumFractionDigits: 2 }) || "0.00"}
+                ₹
+                {invoice.gst_amount?.toLocaleString("en-IN", {
+                  maximumFractionDigits: 2,
+                }) || "0.00"}
               </td>
             </tr>
             <tr className="bg-blue-100">
               <td className="py-4 font-bold text-gray-900">Total Amount</td>
               <td className="py-4 text-right font-bold text-xl text-blue-600">
-                ₹{invoice.total_amount.toLocaleString("en-IN", { maximumFractionDigits: 2 })}
+                ₹
+                {invoice.total_amount.toLocaleString("en-IN", {
+                  maximumFractionDigits: 2,
+                })}
               </td>
             </tr>
           </tbody>

@@ -49,7 +49,7 @@ export default function InvoicesPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [selectedInvoiceId, setSelectedInvoiceId] = useState<string | null>(
-    null
+    null,
   );
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
@@ -120,11 +120,11 @@ export default function InvoicesPage() {
 
   const filteredInvoices = invoices.filter(
     (invoice) =>
-      invoice.invoice_number.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      invoice.customer_name
+      invoice.invoice_number
         .toLowerCase()
         .includes(searchQuery.toLowerCase()) ||
-      invoice.customer_email.toLowerCase().includes(searchQuery.toLowerCase())
+      invoice.customer_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      invoice.customer_email.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   if (loading) {
@@ -250,7 +250,8 @@ export default function InvoicesPage() {
                       </p>
                     </div>
                     <span className="text-2xl font-bold text-blue-600">
-                      ₹{invoice.total_amount.toLocaleString("en-IN", {
+                      ₹
+                      {invoice.total_amount.toLocaleString("en-IN", {
                         maximumFractionDigits: 2,
                       })}
                     </span>
@@ -273,7 +274,7 @@ export default function InvoicesPage() {
                       <p className="text-sm text-gray-600">Created</p>
                       <p className="font-medium text-gray-900">
                         {new Date(invoice.created_at).toLocaleDateString(
-                          "en-IN"
+                          "en-IN",
                         )}
                       </p>
                     </div>
@@ -319,9 +320,7 @@ export default function InvoicesPage() {
                             Cancel
                           </Button>
                           <Button
-                            onClick={() =>
-                              handleDeleteInvoice(invoice.id)
-                            }
+                            onClick={() => handleDeleteInvoice(invoice.id)}
                             className="flex-1 bg-red-600 hover:bg-red-700 text-white"
                             disabled={deleting}
                           >
