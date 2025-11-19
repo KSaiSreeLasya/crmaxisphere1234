@@ -778,7 +778,7 @@ export default function AddLeadsPage() {
                 onClick={() => navigate("/leads")}
                 className="flex-1 px-4 py-2 border border-input text-foreground rounded-lg hover:bg-secondary transition-colors font-medium"
               >
-                Cancel
+                ← Back
               </button>
               <button
                 type="submit"
