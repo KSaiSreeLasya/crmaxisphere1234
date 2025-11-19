@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { X, Plus, Trash2 } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
 interface Lead {
   id?: string;
@@ -14,6 +15,16 @@ interface Lead {
   keywords: string[];
   links: string[];
   actions: string;
+  statusId?: string;
+  nextReminder?: string;
+  note?: string;
+}
+
+interface LeadStatus {
+  id: string;
+  name: string;
+  order_index: number;
+  color: string;
 }
 
 interface LeadsFormProps {
@@ -40,6 +51,9 @@ export default function LeadsForm({
       keywords: [],
       links: [],
       actions: "",
+      statusId: "",
+      nextReminder: "",
+      note: "",
     },
   );
 
@@ -49,6 +63,23 @@ export default function LeadsForm({
   const [industryInput, setIndustryInput] = useState("");
   const [keywordInput, setKeywordInput] = useState("");
   const [linkInput, setLinkInput] = useState("");
+  const [statuses, setStatuses] = useState<LeadStatus[]>([]);
+
+  useEffect(() => {
+    fetchStatuses();
+  }, []);
+
+  const fetchStatuses = async () => {
+    try {
+      const { data } = await supabase
+        .from("lead_status_pipeline")
+        .select("*")
+        .order("order_index");
+      if (data) setStatuses(data);
+    } catch (error) {
+      console.error("Error fetching statuses:", error);
+    }
+  };
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
