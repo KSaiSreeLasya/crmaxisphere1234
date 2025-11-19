@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/context/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 import {
   Plus,
   TrendingUp,
@@ -11,6 +13,7 @@ import {
   AlertCircle,
   Edit,
   Trash2,
+  Users,
 } from "lucide-react";
 
 interface LeadStatus {
@@ -45,6 +48,8 @@ export default function LeadsDashboard() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [leadsByStatus, setLeadsByStatus] = useState<LeadsByStatus>({});
   const [loading, setLoading] = useState(true);
+  const [autoAssignLoading, setAutoAssignLoading] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     fetchStatuses();
@@ -99,6 +104,108 @@ export default function LeadsDashboard() {
     }
   };
 
+  const handleAutoAssign = async () => {
+    setAutoAssignLoading(true);
+    try {
+      // Fetch all sales persons
+      const { data: salesPersons, error: spError } = await supabase
+        .from("sales_persons")
+        .select("id");
+
+      if (spError || !salesPersons || salesPersons.length === 0) {
+        toast({
+          title: "Error",
+          description:
+            "No sales persons found. Please add sales persons first.",
+          variant: "destructive",
+        });
+        setAutoAssignLoading(false);
+        return;
+      }
+
+      // Fetch all unassigned leads
+      const { data: unassignedLeads, error: leadsError } = await supabase
+        .from("leads")
+        .select("id")
+        .is("assigned_to", null);
+
+      if (leadsError) {
+        throw new Error("Failed to fetch unassigned leads");
+      }
+
+      if (!unassignedLeads || unassignedLeads.length === 0) {
+        toast({
+          title: "Info",
+          description: "No unassigned leads found.",
+        });
+        setAutoAssignLoading(false);
+        return;
+      }
+
+      // Fetch current lead assignments to calculate load
+      const { data: allLeads } = await supabase
+        .from("leads")
+        .select("assigned_to");
+
+      // Count leads per sales person
+      const leadCountPerPerson: Record<string, number> = {};
+      salesPersons.forEach((sp) => {
+        leadCountPerPerson[sp.id] = 0;
+      });
+
+      if (allLeads) {
+        allLeads.forEach((lead) => {
+          if (lead.assigned_to && leadCountPerPerson[lead.assigned_to]) {
+            leadCountPerPerson[lead.assigned_to]++;
+          }
+        });
+      }
+
+      // Assign leads to sales persons with fewest leads
+      let assignmentCount = 0;
+      for (const unassignedLead of unassignedLeads) {
+        // Find sales person with fewest leads
+        let minLeads = Infinity;
+        let assignToId = salesPersons[0].id;
+
+        for (const sp of salesPersons) {
+          if ((leadCountPerPerson[sp.id] || 0) < minLeads) {
+            minLeads = leadCountPerPerson[sp.id] || 0;
+            assignToId = sp.id;
+          }
+        }
+
+        // Assign the lead
+        const { error } = await supabase
+          .from("leads")
+          .update({ assigned_to: assignToId })
+          .eq("id", unassignedLead.id);
+
+        if (!error) {
+          leadCountPerPerson[assignToId]++;
+          assignmentCount++;
+        }
+      }
+
+      toast({
+        title: "Success",
+        description: `${assignmentCount} lead(s) assigned successfully.`,
+      });
+
+      // Refresh leads
+      fetchLeads();
+    } catch (error) {
+      console.error("Error auto-assigning leads:", error);
+      toast({
+        title: "Error",
+        description: "Failed to auto-assign leads. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setAutoAssignLoading(false);
+    }
+  };
+
   const getStatusColor = (color: string) => {
     const colorMap: Record<string, string> = {
       gray: "bg-gray-100 text-gray-800",
@@ -135,13 +242,23 @@ export default function LeadsDashboard() {
               View all leads grouped by status
             </p>
           </div>
-          <button
-            onClick={() => navigate("/leads/add")}
-            className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 font-medium"
-          >
-            <Plus className="w-5 h-5" />
-            Add Lead
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleAutoAssign}
+              disabled={autoAssignLoading}
+              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors"
+            >
+              <Users className="w-5 h-5" />
+              {autoAssignLoading ? "Assigning..." : "Auto Assign Leads"}
+            </button>
+            <button
+              onClick={() => navigate("/leads/add")}
+              className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 font-medium"
+            >
+              <Plus className="w-5 h-5" />
+              Add Lead
+            </button>
+          </div>
         </div>
 
         {/* Status Tabs */}

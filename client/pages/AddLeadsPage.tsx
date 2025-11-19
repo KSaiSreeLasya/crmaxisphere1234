@@ -87,19 +87,12 @@ export default function AddLeadsPage() {
       newErrors.company = "Company is required";
     }
 
-    if (formData.emails.length === 0) {
-      newErrors.emails = "At least one email is required";
-    } else {
-      // Clear email error if valid
-      if (newErrors.emails) delete newErrors.emails;
+    // Only set contact error if BOTH email and phone are empty
+    if (formData.emails.length === 0 && formData.phones.length === 0) {
+      newErrors.contact = "At least one email or phone number is required";
     }
-
-    if (formData.phones.length === 0) {
-      newErrors.phones = "At least one phone number is required";
-    } else {
-      // Clear phone error if valid
-      if (newErrors.phones) delete newErrors.phones;
-    }
+    // If either email or phone exists, don't add contact error
+    // This ensures the error is cleared once at least one is added
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -245,22 +238,26 @@ export default function AddLeadsPage() {
     if (!trimmedEmail) return;
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
-      setErrors({ emails: "Please enter a valid email address" });
+      setErrors({ ...errors, email: "Please enter a valid email address" });
       return;
     }
 
     if (formData.emails.includes(trimmedEmail)) {
-      setErrors({ emails: "This email is already added" });
+      setErrors({ ...errors, email: "This email is already added" });
       return;
     }
 
+    const updatedEmails = [...formData.emails, trimmedEmail];
     setFormData({
       ...formData,
       emails: [...formData.emails, trimmedEmail],
     });
     setEmailInput("");
-    // Clear email error when successfully added
-    setErrors((prev) => ({ ...prev, emails: "" }));
+    // Clear contact error since we have a valid email
+    setErrors((prev) => ({
+      ...prev,
+      contact: "",
+    }));
   };
 
   const addPhone = () => {
@@ -269,12 +266,15 @@ export default function AddLeadsPage() {
 
     const digitsOnly = trimmedPhone.replace(/\D/g, "");
     if (!/^\d{10,}$/.test(digitsOnly)) {
-      setErrors({ phones: "Phone number must be at least 10 digits" });
+      setErrors({
+        ...errors,
+        phone: "Phone number must be at least 10 digits",
+      });
       return;
     }
 
     if (formData.phones.includes(trimmedPhone)) {
-      setErrors({ phones: "This phone number is already added" });
+      setErrors({ ...errors, phone: "This phone number is already added" });
       return;
     }
 
@@ -283,8 +283,11 @@ export default function AddLeadsPage() {
       phones: [...formData.phones, trimmedPhone],
     });
     setPhoneInput("");
-    // Clear phone error when successfully added
-    setErrors((prev) => ({ ...prev, phones: "" }));
+    // Clear contact error since we have a valid phone
+    setErrors((prev) => ({
+      ...prev,
+      contact: "",
+    }));
   };
 
   const addIndustry = () => {
@@ -446,6 +449,12 @@ export default function AddLeadsPage() {
                 Contact Information
               </h3>
 
+              {errors.contact && (
+                <div className="p-3 bg-destructive/10 border border-destructive text-destructive rounded-lg text-sm">
+                  {errors.contact}
+                </div>
+              )}
+
               <div>
                 <label className="block text-sm font-medium text-foreground mb-2">
                   Emails <span className="text-destructive">*</span>
@@ -489,11 +498,6 @@ export default function AddLeadsPage() {
                     </div>
                   ))}
                 </div>
-                {errors.emails && (
-                  <p className="text-sm text-destructive mt-1">
-                    {errors.emails}
-                  </p>
-                )}
               </div>
 
               <div>
@@ -539,11 +543,6 @@ export default function AddLeadsPage() {
                     </div>
                   ))}
                 </div>
-                {errors.phones && (
-                  <p className="text-sm text-destructive mt-1">
-                    {errors.phones}
-                  </p>
-                )}
               </div>
             </div>
 
