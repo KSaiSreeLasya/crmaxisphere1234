@@ -176,23 +176,50 @@ export default function AddLeadsPage() {
   };
 
   const addEmail = () => {
-    if (emailInput.trim() && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput)) {
-      setFormData({
-        ...formData,
-        emails: [...formData.emails, emailInput.trim()],
-      });
-      setEmailInput("");
+    const trimmedEmail = emailInput.trim();
+    if (!trimmedEmail) return;
+
+    if (!(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail))) {
+      setErrors({ emails: "Please enter a valid email address" });
+      return;
     }
+
+    if (formData.emails.includes(trimmedEmail)) {
+      setErrors({ emails: "This email is already added" });
+      return;
+    }
+
+    setFormData({
+      ...formData,
+      emails: [...formData.emails, trimmedEmail],
+    });
+    setEmailInput("");
+    // Clear email error when successfully added
+    setErrors((prev) => ({ ...prev, emails: "" }));
   };
 
   const addPhone = () => {
-    if (phoneInput.trim() && /^\d{10,}$/.test(phoneInput.replace(/\D/g, ""))) {
-      setFormData({
-        ...formData,
-        phones: [...formData.phones, phoneInput.trim()],
-      });
-      setPhoneInput("");
+    const trimmedPhone = phoneInput.trim();
+    if (!trimmedPhone) return;
+
+    const digitsOnly = trimmedPhone.replace(/\D/g, "");
+    if (!/^\d{10,}$/.test(digitsOnly)) {
+      setErrors({ phones: "Phone number must be at least 10 digits" });
+      return;
     }
+
+    if (formData.phones.includes(trimmedPhone)) {
+      setErrors({ phones: "This phone number is already added" });
+      return;
+    }
+
+    setFormData({
+      ...formData,
+      phones: [...formData.phones, trimmedPhone],
+    });
+    setPhoneInput("");
+    // Clear phone error when successfully added
+    setErrors((prev) => ({ ...prev, phones: "" }));
   };
 
   const addIndustry = () => {
