@@ -48,6 +48,11 @@ const AppContent = () => {
     fetch("/api/seed", { method: "POST" }).catch(() => {
       // Silently fail if seed endpoint is not available
     });
+
+    // Ensure packages exist on app load
+    fetch("/api/ensure-packages", { method: "POST" }).catch(() => {
+      // Silently fail if ensure-packages endpoint is not available
+    });
   }, []);
 
   return (
