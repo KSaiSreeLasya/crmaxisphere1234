@@ -31,12 +31,11 @@ interface LeadStatus {
 }
 
 export default function AdminDashboard() {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<"overview" | "sales" | "leads">(
     "overview",
   );
-  const [showSalesPersonForm, setShowSalesPersonForm] = useState(false);
-  const [showLeadsForm, setShowLeadsForm] = useState(false);
   const [editingSalesPerson, setEditingSalesPerson] = useState<
     SalesPerson | undefined
   >();
