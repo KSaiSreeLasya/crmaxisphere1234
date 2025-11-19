@@ -265,6 +265,19 @@ export default function LeadsDashboard() {
                             {lead.phone}
                           </p>
                         )}
+                        {lead.note && (
+                          <p className="text-foreground">
+                            <span className="font-medium">Note:</span>{" "}
+                            {lead.note}
+                          </p>
+                        )}
+                        {lead.next_reminder && (
+                          <p className="text-foreground flex items-center gap-1">
+                            <Clock className="w-4 h-4" />
+                            <span className="font-medium">Next Reminder:</span>{" "}
+                            {new Date(lead.next_reminder).toLocaleDateString()}
+                          </p>
+                        )}
                       </div>
 
                       <div className="flex gap-2">
