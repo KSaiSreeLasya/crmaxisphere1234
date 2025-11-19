@@ -247,11 +247,14 @@ export default function AddLeadsPage() {
     const updatedEmails = [...formData.emails, trimmedEmail];
     setFormData({
       ...formData,
-      emails: updatedEmails,
+      emails: [...formData.emails, trimmedEmail],
     });
     setEmailInput("");
-    // Clear all errors when contact is added
-    setErrors({});
+    // Only clear contact error
+    setErrors((prev) => {
+      const { contact, ...rest } = prev;
+      return rest;
+    });
   };
 
   const addPhone = () => {
@@ -274,8 +277,11 @@ export default function AddLeadsPage() {
       phones: [...formData.phones, trimmedPhone],
     });
     setPhoneInput("");
-    // Clear all errors when contact is added
-    setErrors({});
+    // Only clear contact error
+    setErrors((prev) => {
+      const { contact, ...rest } = prev;
+      return rest;
+    });
   };
 
   const addIndustry = () => {
