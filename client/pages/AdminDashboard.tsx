@@ -423,26 +423,6 @@ export default function AdminDashboard() {
         )}
       </div>
 
-      {/* Forms */}
-      {showSalesPersonForm && (
-        <SalesPersonForm
-          initialData={editingSalesPerson}
-          onSubmit={handleAddSalesPerson}
-          onClose={() => {
-            setShowSalesPersonForm(false);
-            setEditingSalesPerson(undefined);
-          }}
-        />
-      )}
-
-      {showLeadsForm && (
-        <LeadsForm
-          onSubmit={handleAddLead}
-          onClose={() => {
-            setShowLeadsForm(false);
-          }}
-        />
-      )}
     </Layout>
   );
 }
