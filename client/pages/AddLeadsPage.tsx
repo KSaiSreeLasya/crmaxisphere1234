@@ -244,17 +244,16 @@ export default function AddLeadsPage() {
       return;
     }
 
+    const updatedEmails = [...formData.emails, trimmedEmail];
     setFormData({
       ...formData,
-      emails: [...formData.emails, trimmedEmail],
+      emails: updatedEmails,
     });
     setEmailInput("");
     // Clear contact error when successfully added
-    setErrors((prev) => {
-      const newErrors = { ...prev };
-      delete newErrors.contact;
-      return newErrors;
-    });
+    if (updatedEmails.length > 0) {
+      setErrors({});
+    }
   };
 
   const addPhone = () => {
