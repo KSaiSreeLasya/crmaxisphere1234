@@ -381,30 +381,7 @@ export default function CreateInvoice() {
               </div>
             </div>
 
-
-            {/* Package Features and Details */}
-            {selectedPackage && (
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                  Package Scope & Features
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {selectedPackage.features.map((feature, index) => (
-                    <div key={index} className="flex items-start gap-3">
-                      <input
-                        type="checkbox"
-                        checked={true}
-                        readOnly
-                        className="mt-1 w-5 h-5 text-green-600 rounded cursor-default"
-                      />
-                      <span className="text-gray-700">{feature}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Pricing & Payment */}
+            {/* Step 4: Pricing & Payment */}
             {selectedPackage && (
               <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
                 <h2 className="text-lg font-semibold text-gray-900 mb-6">
