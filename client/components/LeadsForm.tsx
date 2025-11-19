@@ -583,6 +583,26 @@ export default function LeadsForm({
                 className="w-full px-3 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-background text-foreground"
               />
             </div>
+
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-1">
+                Assign To
+              </label>
+              <select
+                value={formData.assignedTo || ""}
+                onChange={(e) =>
+                  setFormData({ ...formData, assignedTo: e.target.value })
+                }
+                className="w-full px-3 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-background text-foreground"
+              >
+                <option value="">Select a sales person</option>
+                {salesPersons.map((person) => (
+                  <option key={person.id} value={person.id}>
+                    {person.name}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
           {/* Notes */}
