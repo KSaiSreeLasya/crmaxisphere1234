@@ -85,31 +85,6 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleAddLead = async (data: any) => {
-    try {
-      const noStageStatus = statuses.find((s) => s.name === "No Stage");
-      if (!noStageStatus) return;
-
-      await supabase.from("leads").insert({
-        name: data.name,
-        company: data.company,
-        job_title: data.jobTitle,
-        location: data.location,
-        company_size: data.companySize,
-        industries: data.industries,
-        keywords: data.keywords,
-        links: data.links,
-        notes: data.actions,
-        status_id: noStageStatus.id,
-        created_by: user?.id,
-      });
-
-      setShowLeadsForm(false);
-      fetchData();
-    } catch (error) {
-      console.error("Error adding lead:", error);
-    }
-  };
 
   const handleDeleteLead = async (id: string) => {
     try {
