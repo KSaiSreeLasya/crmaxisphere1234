@@ -260,12 +260,12 @@ export default function AddLeadsPage() {
 
     const digitsOnly = trimmedPhone.replace(/\D/g, "");
     if (!/^\d{10,}$/.test(digitsOnly)) {
-      setErrors({ phones: "Phone number must be at least 10 digits" });
+      setErrors({ ...errors, phone: "Phone number must be at least 10 digits" });
       return;
     }
 
     if (formData.phones.includes(trimmedPhone)) {
-      setErrors({ phones: "This phone number is already added" });
+      setErrors({ ...errors, phone: "This phone number is already added" });
       return;
     }
 
@@ -274,10 +274,8 @@ export default function AddLeadsPage() {
       phones: [...formData.phones, trimmedPhone],
     });
     setPhoneInput("");
-    setErrors((prev) => {
-      const { contact, ...rest } = prev;
-      return rest;
-    });
+    // Clear all errors when contact is added
+    setErrors({});
   };
 
   const addIndustry = () => {
