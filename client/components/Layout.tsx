@@ -60,7 +60,14 @@ export default function Layout({ children, showSidebar = true }: LayoutProps) {
           </Link>
           
           <div className="flex items-center gap-4">
-            <button className="p-2 hover:bg-secondary rounded-lg transition-colors">
+            <span className="text-sm text-muted-foreground hidden sm:block">
+              {user?.first_name} {user?.last_name}
+            </span>
+            <button
+              onClick={handleLogout}
+              className="p-2 hover:bg-secondary rounded-lg transition-colors"
+              title="Logout"
+            >
               <LogOut className="w-5 h-5 text-foreground" />
             </button>
           </div>
