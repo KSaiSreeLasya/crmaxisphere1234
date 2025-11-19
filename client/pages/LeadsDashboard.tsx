@@ -223,6 +223,20 @@ export default function LeadsDashboard() {
     return colorMap[color] || "bg-gray-100 text-gray-800";
   };
 
+  const getStatusName = (statusId: string) => {
+    return statuses.find((s) => s.id === statusId)?.name || "Unknown";
+  };
+
+  const getStatusBadgeClass = (statusId: string) => {
+    const status = statuses.find((s) => s.id === statusId);
+    return status ? getStatusColor(status.color) : "bg-gray-100 text-gray-800";
+  };
+
+  const getSalesPersonName = (spId?: string) => {
+    if (!spId) return "Unassigned";
+    return salesPersons.find((sp) => sp.id === spId)?.name || "Unknown";
+  };
+
   if (loading) {
     return (
       <Layout>
