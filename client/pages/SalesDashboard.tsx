@@ -1,7 +1,48 @@
 import Layout from "@/components/Layout";
-import { Users, Target, TrendingUp, Award } from "lucide-react";
+import { Users, Target, TrendingUp, Award, Clock, AlertCircle } from "lucide-react";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/context/AuthContext";
+
+interface Reminder {
+  id: string;
+  name: string;
+  company: string;
+  next_reminder: string;
+  job_title: string;
+}
 
 export default function SalesDashboard() {
+  const { user } = useAuth();
+  const [upcomingReminders, setUpcomingReminders] = useState<Reminder[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (user?.id) {
+      fetchUpcomingReminders();
+    }
+  }, [user?.id]);
+
+  const fetchUpcomingReminders = async () => {
+    try {
+      const { data } = await supabase
+        .from("leads")
+        .select("id, name, company, next_reminder, job_title")
+        .eq("created_by", user?.id)
+        .not("next_reminder", "is", null)
+        .gte("next_reminder", new Date().toISOString().split("T")[0])
+        .order("next_reminder", { ascending: true })
+        .limit(5);
+
+      if (data) {
+        setUpcomingReminders(data);
+      }
+    } catch (error) {
+      console.error("Error fetching reminders:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
   const salesStats = [
     {
       label: "Total Sales Persons",
