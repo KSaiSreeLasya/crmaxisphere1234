@@ -21,6 +21,7 @@ interface Lead {
   statusId?: string;
   nextReminder?: string;
   note?: string;
+  assignedTo?: string;
 }
 
 interface LeadStatus {
