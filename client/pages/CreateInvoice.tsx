@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/context/AuthContext";
-import { ChevronDown, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { ArrowLeft } from "lucide-react";
 
 interface Package {
   id: string;
@@ -20,7 +19,6 @@ interface FormData {
   customerEmail: string;
   customerPhone: string;
   companyName: string;
-  packageId: string;
   gstPercentage: number;
   additionalNotes: string;
 }
@@ -29,9 +27,14 @@ export default function CreateInvoice() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
-  const [packages, setPackages] = useState<Package[]>([]);
+  const [searchParams] = useSearchParams();
+
+  const packageId = searchParams.get("packageId");
+
   const [selectedPackage, setSelectedPackage] = useState<Package | null>(null);
-  const [showPackageDropdown, setShowPackageDropdown] = useState(false);
+  const [selectedFeatures, setSelectedFeatures] = useState<Set<number>>(
+    new Set()
+  );
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState<FormData>({
@@ -39,7 +42,6 @@ export default function CreateInvoice() {
     customerEmail: "",
     customerPhone: "",
     companyName: "",
-    packageId: "",
     gstPercentage: 18,
     additionalNotes: "",
   });
@@ -54,26 +56,41 @@ export default function CreateInvoice() {
       navigate("/unauthorized");
       return;
     }
-    fetchPackages();
-  }, [user?.id]);
 
-  const fetchPackages = async () => {
+    if (!packageId) {
+      navigate("/admin/invoices/select-package");
+      return;
+    }
+
+    fetchPackage();
+  }, [user?.id, packageId]);
+
+  const fetchPackage = async () => {
     try {
       const { data, error } = await supabase
         .from("packages")
         .select("*")
+        .eq("id", packageId)
         .eq("is_active", true)
-        .order("price", { ascending: true });
+        .single();
 
       if (error) throw error;
-      setPackages(data || []);
+      if (!data) {
+        navigate("/admin/invoices/select-package");
+        return;
+      }
+
+      setSelectedPackage(data);
+      // Select all features by default
+      setSelectedFeatures(new Set(data.features.map((_, i) => i)));
     } catch (error) {
-      console.error("Error fetching packages:", error);
+      console.error("Error fetching package:", error);
       toast({
         title: "Error",
-        description: "Failed to load packages",
+        description: "Failed to load package",
         variant: "destructive",
       });
+      navigate("/admin/invoices/select-package");
     } finally {
       setLoading(false);
     }
@@ -89,9 +106,6 @@ export default function CreateInvoice() {
       newErrors.customerEmail = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.customerEmail)) {
       newErrors.customerEmail = "Invalid email format";
-    }
-    if (!selectedPackage) {
-      newErrors.packageId = "Please select a package";
     }
 
     setErrors(newErrors);
@@ -112,20 +126,20 @@ export default function CreateInvoice() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!validateForm()) {
+    if (!validateForm() || !selectedPackage) {
       return;
     }
 
     setSubmitting(true);
 
     try {
-      if (!selectedPackage) {
-        throw new Error("Package not selected");
-      }
-
       const basePrice = selectedPackage.price;
       const gstAmount = (basePrice * formData.gstPercentage) / 100;
       const totalAmount = basePrice + gstAmount;
+
+      const selectedFeaturesList = Array.from(selectedFeatures)
+        .sort((a, b) => a - b)
+        .map((index) => selectedPackage.features[index]);
 
       const { data, error } = await supabase
         .from("invoices")
@@ -159,7 +173,9 @@ export default function CreateInvoice() {
       toast({
         title: "Error",
         description:
-          error instanceof Error ? error.message : "Failed to create invoice",
+          error instanceof Error
+            ? error.message
+            : "Failed to create invoice",
         variant: "destructive",
       });
     } finally {
@@ -168,7 +184,7 @@ export default function CreateInvoice() {
   };
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -184,9 +200,15 @@ export default function CreateInvoice() {
     }
   };
 
-  const basePrice = selectedPackage?.price || 0;
-  const gstAmount = (basePrice * formData.gstPercentage) / 100;
-  const totalAmount = basePrice + gstAmount;
+  const toggleFeature = (index: number) => {
+    const newSelected = new Set(selectedFeatures);
+    if (newSelected.has(index)) {
+      newSelected.delete(index);
+    } else {
+      newSelected.add(index);
+    }
+    setSelectedFeatures(newSelected);
+  };
 
   if (loading) {
     return (
@@ -198,16 +220,39 @@ export default function CreateInvoice() {
     );
   }
 
+  if (!selectedPackage) {
+    return (
+      <Layout showSidebar={true}>
+        <div className="p-6 flex items-center justify-center min-h-screen">
+          <p className="text-muted-foreground">Package not found</p>
+        </div>
+      </Layout>
+    );
+  }
+
+  const basePrice = selectedPackage.price;
+  const gstAmount = (basePrice * formData.gstPercentage) / 100;
+  const totalAmount = basePrice + gstAmount;
+
   return (
     <Layout showSidebar={true}>
       <div className="min-h-screen bg-gray-50 p-6">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <div className="mb-8">
+            <button
+              onClick={() => navigate("/admin/invoices/select-package")}
+              className="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium mb-4"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              Back to Packages
+            </button>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
               Create Invoice
             </h1>
-            <p className="text-gray-600">Create a new invoice for a customer</p>
+            <p className="text-gray-600">
+              Package: <span className="font-semibold">{selectedPackage.name}</span>
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -294,154 +339,118 @@ export default function CreateInvoice() {
               </div>
             </div>
 
-            {/* Packages Selection */}
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                Select Package
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                {packages.map((pkg) => (
-                  <div
-                    key={pkg.id}
-                    onClick={() => {
-                      setSelectedPackage(pkg);
-                      setFormData((prev) => ({
-                        ...prev,
-                        packageId: pkg.id,
-                      }));
-                      setErrors((prev) => {
-                        const newErrors = { ...prev };
-                        delete newErrors.packageId;
-                        return newErrors;
-                      });
-                    }}
-                    className={`p-6 rounded-xl border-2 cursor-pointer transition-all ${
-                      selectedPackage?.id === pkg.id
-                        ? "border-purple-600 bg-purple-50"
-                        : "border-gray-200 bg-white hover:border-purple-300"
-                    }`}
+            {/* Scope & Features */}
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-lg font-semibold text-gray-900">
+                  Scope & Features
+                </h2>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (selectedFeatures.size === selectedPackage.features.length) {
+                      setSelectedFeatures(new Set());
+                    } else {
+                      setSelectedFeatures(
+                        new Set(selectedPackage.features.map((_, i) => i))
+                      );
+                    }
+                  }}
+                  className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                >
+                  {selectedFeatures.size === selectedPackage.features.length
+                    ? "Deselect All"
+                    : "Select All"}
+                </button>
+              </div>
+
+              <p className="text-sm text-gray-600 mb-6">
+                Select features from {selectedPackage.name} to include in this invoice
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {selectedPackage.features.map((feature, index) => (
+                  <label
+                    key={index}
+                    className="flex items-start gap-3 p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
                   >
-                    <h3 className="font-semibold text-gray-900 mb-2">
-                      {pkg.name}
-                    </h3>
-                    <p className="text-2xl font-bold text-gray-900 mb-3">
-                      ₹{pkg.price.toLocaleString("en-IN")}
-                    </p>
-                    <p className="text-sm text-gray-600 mb-4">
-                      {pkg.description}
-                    </p>
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedPackage(pkg);
-                        setFormData((prev) => ({
-                          ...prev,
-                          packageId: pkg.id,
-                        }));
-                      }}
-                      className={`w-full py-2 rounded-lg font-medium transition-colors ${
-                        selectedPackage?.id === pkg.id
-                          ? "bg-purple-600 text-white"
-                          : "bg-gray-100 text-gray-900 hover:bg-gray-200"
-                      }`}
-                    >
-                      {selectedPackage?.id === pkg.id
-                        ? "Selected"
-                        : "Select Package"}
-                    </button>
-                  </div>
+                    <input
+                      type="checkbox"
+                      checked={selectedFeatures.has(index)}
+                      onChange={() => toggleFeature(index)}
+                      className="mt-1 w-5 h-5 text-green-600 rounded cursor-pointer"
+                    />
+                    <span className="text-gray-700 flex-1">{feature}</span>
+                  </label>
                 ))}
               </div>
 
-              {errors.packageId && (
-                <p className="text-red-500 text-sm">{errors.packageId}</p>
+              {selectedFeatures.size === 0 && (
+                <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <p className="text-sm text-yellow-800">
+                    Please select at least one feature to include in the invoice
+                  </p>
+                </div>
               )}
             </div>
 
-            {/* Package Features and Details */}
-            {selectedPackage && (
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                  Package Scope & Features
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {selectedPackage.features.map((feature, index) => (
-                    <div key={index} className="flex items-start gap-3">
-                      <input
-                        type="checkbox"
-                        checked={true}
-                        readOnly
-                        className="mt-1 w-5 h-5 text-green-600 rounded cursor-default"
-                      />
-                      <span className="text-gray-700">{feature}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
             {/* Pricing & Payment */}
-            {selectedPackage && (
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-900 mb-6">
-                  Pricing & Payment
-                </h2>
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+              <h2 className="text-lg font-semibold text-gray-900 mb-6">
+                Pricing & Payment
+              </h2>
 
-                <div className="space-y-4 mb-6">
-                  <div className="flex items-center justify-between pb-4 border-b border-gray-200">
-                    <span className="text-gray-700">Package Price</span>
-                    <span className="font-medium text-gray-900">
-                      ₹{basePrice.toLocaleString("en-IN")}
+              <div className="space-y-4 mb-6">
+                <div className="flex items-center justify-between pb-4 border-b border-gray-200">
+                  <span className="text-gray-700">Package Price</span>
+                  <span className="font-medium text-gray-900">
+                    ₹{basePrice.toLocaleString("en-IN")}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between pb-4 border-b border-gray-200">
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-700">GST Percentage (%)</span>
+                    <span className="text-sm text-gray-500">
+                      (currently {formData.gstPercentage}%)
                     </span>
                   </div>
+                  <input
+                    type="number"
+                    name="gstPercentage"
+                    value={formData.gstPercentage}
+                    onChange={handleInputChange}
+                    min="0"
+                    max="100"
+                    className="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
 
-                  <div className="flex items-center justify-between pb-4 border-b border-gray-200">
-                    <div className="flex items-center gap-2">
-                      <span className="text-gray-700">GST Percentage (%)</span>
-                      <span className="text-sm text-gray-500">
-                        (currently {formData.gstPercentage}%)
-                      </span>
-                    </div>
-                    <input
-                      type="number"
-                      name="gstPercentage"
-                      value={formData.gstPercentage}
-                      onChange={handleInputChange}
-                      min="0"
-                      max="100"
-                      className="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
+                <div className="flex items-center justify-between pb-4 border-b border-gray-200">
+                  <span className="text-gray-700">
+                    GST Amount ({formData.gstPercentage}%)
+                  </span>
+                  <span className="font-medium text-gray-900">
+                    ₹{gstAmount.toLocaleString("en-IN", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </span>
+                </div>
 
-                  <div className="flex items-center justify-between pb-4 border-b border-gray-200">
-                    <span className="text-gray-700">
-                      GST Amount ({formData.gstPercentage}%)
-                    </span>
-                    <span className="font-medium text-gray-900">
-                      ₹
-                      {gstAmount.toLocaleString("en-IN", {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-between pt-2 bg-purple-50 px-4 py-3 rounded-lg border border-purple-200">
-                    <span className="font-semibold text-gray-900">
-                      Total Amount Due
-                    </span>
-                    <span className="text-2xl font-bold text-purple-600">
-                      ₹
-                      {totalAmount.toLocaleString("en-IN", {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })}
-                    </span>
-                  </div>
+                <div className="flex items-center justify-between p-4 bg-purple-50 border-2 border-purple-200 rounded-lg">
+                  <span className="font-semibold text-gray-900">
+                    Total Amount Due
+                  </span>
+                  <span className="text-2xl font-bold text-purple-600">
+                    ₹{totalAmount.toLocaleString("en-IN", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </span>
                 </div>
               </div>
-            )}
+            </div>
 
             {/* Additional Information */}
             <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
@@ -475,8 +484,8 @@ export default function CreateInvoice() {
               </button>
               <button
                 type="submit"
-                disabled={submitting}
-                className="flex items-center gap-2 bg-purple-600 text-white px-8 py-2 rounded-lg hover:bg-purple-700 transition-colors font-medium disabled:opacity-50"
+                disabled={submitting || selectedFeatures.size === 0}
+                className="bg-purple-600 text-white px-8 py-2 rounded-lg hover:bg-purple-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {submitting ? "Creating..." : "Create & View Invoice"}
               </button>
