@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
-import SalesPersonForm from "@/components/SalesPersonForm";
-import LeadsForm from "@/components/LeadsForm";
 import { Edit, Trash2, Plus, BarChart3, Users, TrendingUp } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/context/AuthContext";
