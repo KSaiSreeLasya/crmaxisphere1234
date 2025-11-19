@@ -87,13 +87,15 @@ export default function AddLeadsPage() {
       newErrors.company = "Company is required";
     }
 
+    // Only set contact error if BOTH email and phone are empty
     if (formData.emails.length === 0 && formData.phones.length === 0) {
       newErrors.contact = "At least one email or phone number is required";
     }
+    // If either email or phone exists, don't add contact error
+    // This ensures the error is cleared once at least one is added
 
     setErrors(newErrors);
-    // Return true if no errors exist
-    return Object.keys(newErrors).every(key => !newErrors[key]);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
