@@ -104,6 +104,108 @@ export default function LeadsDashboard() {
     }
   };
 
+  const handleAutoAssign = async () => {
+    setAutoAssignLoading(true);
+    try {
+      // Fetch all sales persons
+      const { data: salesPersons, error: spError } = await supabase
+        .from("sales_persons")
+        .select("id");
+
+      if (spError || !salesPersons || salesPersons.length === 0) {
+        toast({
+          title: "Error",
+          description:
+            "No sales persons found. Please add sales persons first.",
+          variant: "destructive",
+        });
+        setAutoAssignLoading(false);
+        return;
+      }
+
+      // Fetch all unassigned leads
+      const { data: unassignedLeads, error: leadsError } = await supabase
+        .from("leads")
+        .select("id")
+        .is("assigned_to", null);
+
+      if (leadsError) {
+        throw new Error("Failed to fetch unassigned leads");
+      }
+
+      if (!unassignedLeads || unassignedLeads.length === 0) {
+        toast({
+          title: "Info",
+          description: "No unassigned leads found.",
+        });
+        setAutoAssignLoading(false);
+        return;
+      }
+
+      // Fetch current lead assignments to calculate load
+      const { data: allLeads } = await supabase
+        .from("leads")
+        .select("assigned_to");
+
+      // Count leads per sales person
+      const leadCountPerPerson: Record<string, number> = {};
+      salesPersons.forEach((sp) => {
+        leadCountPerPerson[sp.id] = 0;
+      });
+
+      if (allLeads) {
+        allLeads.forEach((lead) => {
+          if (lead.assigned_to && leadCountPerPerson[lead.assigned_to]) {
+            leadCountPerPerson[lead.assigned_to]++;
+          }
+        });
+      }
+
+      // Assign leads to sales persons with fewest leads
+      let assignmentCount = 0;
+      for (const unassignedLead of unassignedLeads) {
+        // Find sales person with fewest leads
+        let minLeads = Infinity;
+        let assignToId = salesPersons[0].id;
+
+        for (const sp of salesPersons) {
+          if ((leadCountPerPerson[sp.id] || 0) < minLeads) {
+            minLeads = leadCountPerPerson[sp.id] || 0;
+            assignToId = sp.id;
+          }
+        }
+
+        // Assign the lead
+        const { error } = await supabase
+          .from("leads")
+          .update({ assigned_to: assignToId })
+          .eq("id", unassignedLead.id);
+
+        if (!error) {
+          leadCountPerPerson[assignToId]++;
+          assignmentCount++;
+        }
+      }
+
+      toast({
+        title: "Success",
+        description: `${assignmentCount} lead(s) assigned successfully.`,
+      });
+
+      // Refresh leads
+      fetchLeads();
+    } catch (error) {
+      console.error("Error auto-assigning leads:", error);
+      toast({
+        title: "Error",
+        description: "Failed to auto-assign leads. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setAutoAssignLoading(false);
+    }
+  };
+
   const getStatusColor = (color: string) => {
     const colorMap: Record<string, string> = {
       gray: "bg-gray-100 text-gray-800",
