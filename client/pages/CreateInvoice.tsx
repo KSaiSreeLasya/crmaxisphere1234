@@ -142,7 +142,7 @@ export default function CreateInvoice() {
         throw new Error("Package not selected");
       }
 
-      const basePrice = selectedPackage.price;
+      const basePrice = customBasePrice ?? selectedPackage.price;
       const gstAmount = (basePrice * formData.gstPercentage) / 100;
       const totalAmount = basePrice + gstAmount;
 
@@ -288,7 +288,7 @@ export default function CreateInvoice() {
                       {pkg.features.slice(0, 3).map((feature, idx) => (
                         <div key={idx} className="flex items-start gap-2">
                           <span className="text-green-600 text-sm font-bold mt-0.5">
-                            ���
+                            ✓
                           </span>
                           <span className="text-xs text-gray-600">
                             {feature}
