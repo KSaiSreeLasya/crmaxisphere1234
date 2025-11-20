@@ -447,10 +447,13 @@ export default function InvoiceDetail() {
                     </div>
                     <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #d1d5db; padding: 8px 0; margin-bottom: 8px;">
                       <span class="pricing-label">Tax (${invoice.gst_percentage}% GST):</span>
-                      <span class="pricing-value">₹${invoice.gst_amount.toLocaleString("en-IN", {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })}</span>
+                      <span class="pricing-value">₹${invoice.gst_amount.toLocaleString(
+                        "en-IN",
+                        {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        },
+                      )}</span>
                     </div>
                     <div class="total-row total-amount" style="display: flex; justify-content: space-between; padding: 8px; border-radius: 3px;">
                       <span class="total-amount-label">Total Amount Due</span>
@@ -630,8 +633,7 @@ export default function InvoiceDetail() {
                       Invoice Number: {invoice.invoice_number}
                     </p>
                     <p className="text-xs text-gray-600 mb-2">
-                      <strong>Date:</strong>{" "}
-                      {formatDate(invoice.created_at)}
+                      <strong>Date:</strong> {formatDate(invoice.created_at)}
                     </p>
                     <p className="text-xs text-gray-600 mb-2">
                       <strong>Due Date:</strong>{" "}
@@ -726,8 +728,7 @@ export default function InvoiceDetail() {
                     <div className="flex justify-end gap-8">
                       <span className="text-gray-700 text-sm">Subtotal:</span>
                       <span className="text-gray-900 font-semibold text-sm w-32 text-right">
-                        ₹
-                        {invoice.base_price.toLocaleString("en-IN")}
+                        ₹{invoice.base_price.toLocaleString("en-IN")}
                       </span>
                     </div>
                     <div className="flex justify-end gap-8 pb-3 border-b border-gray-200">
