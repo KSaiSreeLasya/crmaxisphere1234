@@ -61,6 +61,7 @@ export default function InvoiceDetail() {
           gst_amount,
           total_amount,
           additional_notes,
+          selected_features,
           created_at,
           created_by,
           packages(id, name, price, description, features)
