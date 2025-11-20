@@ -176,128 +176,167 @@ export default function InvoiceDetail() {
             }
             .header {
               display: flex;
-              justify-content: space-between;
-              margin-bottom: 25px;
+              align-items: flex-start;
+              gap: 30px;
+              margin-bottom: 20px;
+              padding-bottom: 20px;
+              border-bottom: 1px solid #d1d5db;
+            }
+            .header-right {
+              margin-left: auto;
+              text-align: right;
             }
             .invoice-meta {
               text-align: right;
             }
             .invoice-meta p {
-              margin: 3px 0;
+              margin: 4px 0;
               color: #666;
               font-size: 12px;
             }
             .invoice-number {
-              font-size: 14px;
+              font-size: 12px;
               font-weight: bold;
               color: #333;
+              margin-bottom: 8px;
             }
             .section {
-              margin-bottom: 20px;
+              margin-bottom: 16px;
             }
             .section-title {
-              font-size: 12px;
+              font-size: 10px;
               font-weight: bold;
               color: #333;
               text-transform: uppercase;
               margin-bottom: 10px;
-              border-bottom: 1px solid #e0e0e0;
-              padding-bottom: 8px;
+              border-bottom: 1px solid #d1d5db;
+              padding-bottom: 6px;
+              letter-spacing: 0.5px;
             }
             .bill-to {
               display: flex;
-              gap: 30px;
-              font-size: 13px;
+              gap: 40px;
+              font-size: 12px;
             }
             .bill-to-item {
               flex: 1;
             }
             .bill-to-item h3 {
-              font-size: 11px;
-              color: #999;
+              font-size: 10px;
+              color: #888;
               text-transform: uppercase;
-              margin: 0 0 5px 0;
-              font-weight: bold;
+              margin: 0 0 4px 0;
+              font-weight: 600;
+              letter-spacing: 0.5px;
             }
             .bill-to-item p {
-              margin: 2px 0;
+              margin: 1px 0;
               color: #333;
+              font-size: 12px;
+            }
+            .divider {
+              border-top: 1px solid #d1d5db;
+              margin: 12px 0;
             }
             .pricing-table {
               width: 100%;
               border-collapse: collapse;
-              font-size: 12px;
+              font-size: 11px;
+              margin-bottom: 12px;
             }
             .pricing-table th {
-              background-color: #f9f9f9;
+              background-color: transparent;
               padding: 8px;
-              text-align: right;
-              font-weight: bold;
+              text-align: left;
+              font-weight: 600;
               color: #333;
-              border-bottom: 2px solid #e0e0e0;
+              border-bottom: 2px solid #d1d5db;
+              font-size: 11px;
+            }
+            .pricing-table th:not(:first-child) {
+              text-align: right;
             }
             .pricing-table td {
               padding: 8px;
-              text-align: right;
+              text-align: left;
               color: #333;
-              border-bottom: 1px solid #f0f0f0;
+              border-bottom: 1px solid #e5e7eb;
+              font-size: 11px;
+            }
+            .pricing-table td:not(:first-child) {
+              text-align: right;
             }
             .pricing-label {
               text-align: left;
+              font-size: 11px;
+              color: #333;
+            }
+            .pricing-value {
+              text-align: right;
+              font-size: 11px;
+              color: #333;
             }
             .total-row {
-              background-color: #f0f0f0;
-              font-weight: bold;
+              background-color: #f3e8ff;
+              font-weight: 600;
             }
             .total-amount {
-              background-color: #6b46c1;
-              color: white;
-              font-size: 13px;
+              background-color: #f3e8ff;
+              font-size: 12px;
+            }
+            .total-amount-label {
+              color: #333;
+              font-weight: 600;
             }
             .total-amount-value {
-              color: white;
+              color: #9333ea;
+              font-weight: 700;
+              font-size: 13px;
             }
             .features-grid {
               display: grid;
               grid-template-columns: 1fr 1fr;
-              gap: 12px;
-              font-size: 12px;
+              gap: 10px;
+              font-size: 11px;
             }
             .feature-item {
               display: flex;
               align-items: flex-start;
-              gap: 8px;
-              padding: 10px;
-              background-color: #f0f8f4;
-              border-radius: 4px;
+              gap: 6px;
+              padding: 8px;
+              background-color: #f0fdf4;
+              border: 1px solid #dcfce7;
+              border-radius: 3px;
             }
             .feature-check {
               color: #22c55e;
               font-weight: bold;
-              min-width: 20px;
+              min-width: 16px;
               flex-shrink: 0;
             }
             .feature-text {
               color: #333;
-              line-height: 1.3;
+              line-height: 1.4;
+              font-size: 11px;
             }
             .footer {
-              margin-top: 15px;
-              padding-top: 15px;
-              border-top: 1px solid #e0e0e0;
+              margin-top: 12px;
+              padding-top: 12px;
+              border-top: 1px solid #d1d5db;
               color: #666;
-              font-size: 11px;
+              font-size: 10px;
               text-align: center;
-              position: absolute;
-              bottom: 20px;
-              width: calc(100% - 40px);
             }
             .page {
               position: relative;
               min-height: 11in;
             }
             .page-content {
-              padding-bottom: 60px;
+              padding-bottom: 40px;
+            }
+            .divider-line {
+              border-top: 1px solid #d1d5db;
+              margin: 12px 0;
             }
             @media print {
               body {
