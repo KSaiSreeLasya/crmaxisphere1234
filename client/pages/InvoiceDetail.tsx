@@ -501,19 +501,17 @@ export default function InvoiceDetail() {
                 </div>
               </div>
 
-              <!-- Invoice Number Reference -->
-              <div style="font-size: 12px; color: #666; margin-bottom: 20px;">
-                <strong>Invoice Number:</strong> ${invoice.invoice_number}
-              </div>
+              <!-- Features Page Content -->
+              <div style="margin-bottom: 30px;">
+                <h2 style="font-size: 24px; font-weight: 700; color: #333; margin-bottom: 20px;">Package Scope & Features</h2>
 
-              <!-- Features Section -->
-              <div class="section">
-                <div class="section-title">Package Scope & Features</div>
+                <h3 style="font-size: 16px; font-weight: 600; color: #333; margin-bottom: 24px;">${invoice.packages?.name || "Package"}</h3>
+
                 <div class="features-grid">
                   ${(invoice.selected_features &&
                   invoice.selected_features.length > 0
                     ? invoice.selected_features
-                    : invoice.packages.features
+                    : invoice.packages?.features || []
                   )
                     .map(
                       (feature) => `
