@@ -302,6 +302,7 @@ export default function CreateInvoice() {
                       onClick={(e) => {
                         e.stopPropagation();
                         setSelectedPackage(pkg);
+                        setSelectedFeatures(new Set(pkg.features));
                         setFormData((prev) => ({
                           ...prev,
                           packageId: pkg.id,
