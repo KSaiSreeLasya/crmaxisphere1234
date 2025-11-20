@@ -27,7 +27,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary to-accent flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
@@ -36,8 +36,8 @@ export default function Login() {
               AS
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-white">Axisphere CRM</h1>
-          <p className="text-white/80 mt-2">Sales & Lead Management Platform</p>
+          <h1 className="text-3xl font-bold text-gray-900">Axisphere CRM</h1>
+          <p className="text-gray-600 mt-2">Sales & Lead Management Platform</p>
         </div>
 
         {/* Login Card */}

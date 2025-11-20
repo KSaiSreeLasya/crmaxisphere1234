@@ -34,6 +34,9 @@ export default function CreateInvoice() {
   const [showPackageDropdown, setShowPackageDropdown] = useState(false);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [selectedFeatures, setSelectedFeatures] = useState<Set<string>>(
+    new Set(),
+  );
   const [formData, setFormData] = useState<FormData>({
     customerName: "",
     customerEmail: "",
@@ -65,13 +68,28 @@ export default function CreateInvoice() {
         .eq("is_active", true)
         .order("price", { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase error details:", error);
+        throw error;
+      }
       setPackages(data || []);
     } catch (error) {
       console.error("Error fetching packages:", error);
+      let errorMessage = "Failed to load packages";
+
+      if (typeof error === "object" && error !== null) {
+        if ("message" in error) {
+          errorMessage = String(error.message);
+        } else if ("error_description" in error) {
+          errorMessage = String(error.error_description);
+        } else if ("detail" in error) {
+          errorMessage = String(error.detail);
+        }
+      }
+
       toast({
         title: "Error",
-        description: "Failed to load packages",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -141,6 +159,7 @@ export default function CreateInvoice() {
           gst_amount: gstAmount,
           total_amount: totalAmount,
           additional_notes: formData.additionalNotes,
+          selected_features: Array.from(selectedFeatures),
           created_by: user?.id,
         })
         .select()
@@ -156,10 +175,25 @@ export default function CreateInvoice() {
       navigate(`/admin/invoices/${data.id}`);
     } catch (error) {
       console.error("Error creating invoice:", error);
+      let errorMessage = "Failed to create invoice";
+
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === "object" && error !== null) {
+        if ("message" in error) {
+          errorMessage = String(error.message);
+        } else if ("error_description" in error) {
+          errorMessage = String(error.error_description);
+        } else if ("detail" in error) {
+          errorMessage = String(error.detail);
+        } else {
+          errorMessage = JSON.stringify(error);
+        }
+      }
+
       toast({
         title: "Error",
-        description:
-          error instanceof Error ? error.message : "Failed to create invoice",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -222,6 +256,7 @@ export default function CreateInvoice() {
                     key={pkg.id}
                     onClick={() => {
                       setSelectedPackage(pkg);
+                      setSelectedFeatures(new Set(pkg.features));
                       setFormData((prev) => ({
                         ...prev,
                         packageId: pkg.id,
@@ -244,14 +279,33 @@ export default function CreateInvoice() {
                     <p className="text-2xl font-bold text-gray-900 mb-3">
                       ₹{pkg.price.toLocaleString("en-IN")}
                     </p>
+                    <p className="text-xs text-gray-500 mb-3">/month</p>
                     <p className="text-sm text-gray-600 mb-4">
                       {pkg.description}
                     </p>
+                    <div className="mb-4 space-y-2">
+                      {pkg.features.slice(0, 3).map((feature, idx) => (
+                        <div key={idx} className="flex items-start gap-2">
+                          <span className="text-green-600 text-sm font-bold mt-0.5">
+                            ✓
+                          </span>
+                          <span className="text-xs text-gray-600">
+                            {feature}
+                          </span>
+                        </div>
+                      ))}
+                      {pkg.features.length > 3 && (
+                        <p className="text-xs text-gray-500 mt-2">
+                          +{pkg.features.length - 3} more features
+                        </p>
+                      )}
+                    </div>
                     <button
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
                         setSelectedPackage(pkg);
+                        setSelectedFeatures(new Set(pkg.features));
                         setFormData((prev) => ({
                           ...prev,
                           packageId: pkg.id,
@@ -279,21 +333,76 @@ export default function CreateInvoice() {
             {/* Step 2: Package Features and Details */}
             {selectedPackage && (
               <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                  Package Scope & Features
-                </h2>
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-lg font-semibold text-gray-900">
+                    Scope / Features
+                  </h2>
+                  <div className="flex gap-3">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setSelectedFeatures(new Set(selectedPackage.features))
+                      }
+                      className="px-4 py-2 text-sm font-medium bg-gray-100 text-gray-900 rounded-lg hover:bg-gray-200 transition-colors"
+                    >
+                      Select All
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedFeatures(new Set())}
+                      className="px-4 py-2 text-sm font-medium bg-gray-100 text-gray-900 rounded-lg hover:bg-gray-200 transition-colors"
+                    >
+                      Clear
+                    </button>
+                  </div>
+                </div>
+                <p className="text-sm text-gray-600 mb-6">
+                  Select features from {selectedPackage.name} to include in this
+                  invoice
+                </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {selectedPackage.features.map((feature, index) => (
-                    <div key={index} className="flex items-start gap-3">
-                      <input
-                        type="checkbox"
-                        checked={true}
-                        readOnly
-                        className="mt-1 w-5 h-5 text-green-600 rounded cursor-default"
-                      />
-                      <span className="text-gray-700">{feature}</span>
-                    </div>
-                  ))}
+                  {Array.isArray(selectedPackage.features) &&
+                  selectedPackage.features.length > 0 ? (
+                    selectedPackage.features.map((feature, index) => (
+                      <div
+                        key={index}
+                        className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
+                          selectedFeatures.has(feature)
+                            ? "bg-green-50 border-green-100"
+                            : "bg-gray-50 border-gray-200"
+                        }`}
+                        onClick={() => {
+                          const newSelected = new Set(selectedFeatures);
+                          if (newSelected.has(feature)) {
+                            newSelected.delete(feature);
+                          } else {
+                            newSelected.add(feature);
+                          }
+                          setSelectedFeatures(newSelected);
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedFeatures.has(feature)}
+                          onChange={() => {
+                            const newSelected = new Set(selectedFeatures);
+                            if (newSelected.has(feature)) {
+                              newSelected.delete(feature);
+                            } else {
+                              newSelected.add(feature);
+                            }
+                            setSelectedFeatures(newSelected);
+                          }}
+                          className="mt-1 w-5 h-5 text-green-600 rounded cursor-pointer flex-shrink-0"
+                        />
+                        <span className="text-gray-700 text-sm">{feature}</span>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-gray-500 text-sm col-span-2">
+                      No features available for this package
+                    </p>
+                  )}
                 </div>
               </div>
             )}

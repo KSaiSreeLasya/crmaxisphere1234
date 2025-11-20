@@ -17,6 +17,7 @@ interface Invoice {
   gst_amount: number;
   total_amount: number;
   additional_notes: string;
+  selected_features?: string[];
   created_at: string;
   created_by: string;
   packages?: {
@@ -60,6 +61,7 @@ export default function InvoiceDetail() {
           gst_amount,
           total_amount,
           additional_notes,
+          selected_features,
           created_at,
           created_by,
           packages(id, name, price, description, features)
@@ -423,7 +425,9 @@ export default function InvoiceDetail() {
 
           <!-- PAGE 2: Features (if there are features) -->
           ${
-            invoice.packages && invoice.packages.features.length > 0
+            invoice.packages &&
+            (invoice.selected_features?.length > 0 ||
+              invoice.packages.features.length > 0)
               ? `
           <div class="page">
             <div class="page-content">
@@ -446,7 +450,11 @@ export default function InvoiceDetail() {
               <div class="section">
                 <div class="section-title">Package Scope & Features</div>
                 <div class="features-grid">
-                  ${invoice.packages.features
+                  ${(invoice.selected_features &&
+                  invoice.selected_features.length > 0
+                    ? invoice.selected_features
+                    : invoice.packages.features
+                  )
                     .map(
                       (feature) => `
                     <div class="feature-item">
@@ -623,7 +631,7 @@ export default function InvoiceDetail() {
                         ₹{invoice.base_price.toLocaleString("en-IN")}
                       </td>
                       <td className="text-right px-4 py-3 text-gray-900">
-                        ₹{invoice.base_price.toLocaleString("en-IN")}
+                        ���{invoice.base_price.toLocaleString("en-IN")}
                       </td>
                     </tr>
                   </tbody>
@@ -637,7 +645,11 @@ export default function InvoiceDetail() {
                     Package Scope & Features
                   </h3>
                   <div className="grid grid-cols-2 gap-4">
-                    {invoice.packages.features.map((feature, index) => (
+                    {(invoice.selected_features &&
+                    invoice.selected_features.length > 0
+                      ? invoice.selected_features
+                      : invoice.packages.features
+                    ).map((feature, index) => (
                       <div
                         key={index}
                         className="flex items-start gap-3 p-3 bg-green-50 rounded-lg"

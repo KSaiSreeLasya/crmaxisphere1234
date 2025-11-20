@@ -1,6 +1,13 @@
 import { ReactNode } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Users, TrendingUp, BarChart3, LogOut, FileText } from "lucide-react";
+import {
+  Users,
+  TrendingUp,
+  BarChart3,
+  LogOut,
+  FileText,
+  LineChart,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 
@@ -36,11 +43,6 @@ export default function Layout({ children, showSidebar = true }: LayoutProps) {
       href: "/admin/invoices",
       icon: FileText,
       adminOnly: true,
-    },
-    {
-      label: "Analytics",
-      href: "/admin/analytics",
-      icon: LineChart,
     },
   ].filter((item) => !item.adminOnly || user?.role === "admin");
 
