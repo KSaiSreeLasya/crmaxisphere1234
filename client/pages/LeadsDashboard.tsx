@@ -83,11 +83,14 @@ export default function LeadsDashboard() {
 
   const fetchLeads = async () => {
     try {
-      const { data } = await supabase
-        .from("leads")
-        .select("*")
-        .eq("created_by", user?.id)
-        .order("created_at", { ascending: false });
+      let query = supabase.from("leads").select("*");
+
+      // Admins see all leads, sales persons see only their own
+      if (user?.role !== "admin") {
+        query = query.eq("created_by", user?.id);
+      }
+
+      const { data } = await query.order("created_at", { ascending: false });
 
       if (data) {
         setLeads(data);
