@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { supabase } from "@/lib/supabase";
-import { ArrowLeft, Download } from "lucide-react";
+import { ArrowLeft, Download, ChevronRight, ChevronLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface Invoice {
@@ -29,12 +29,19 @@ interface Invoice {
   };
 }
 
+const COMPANY_NAME = "Axisphere Media Worx LLP";
+const COMPANY_ADDRESS =
+  "Plot no.102, 103, Temple Lane, Mythri Nagar, Mathrusri Nagar, Madinaguda, Serilingampally, K.V.Rangareddy-500049, Telangana, India";
+const LOGO_URL =
+  "https://cdn.builder.io/api/v1/image/assets%2F2f195b82614d46a0b777d649ad418b24%2Ff494acc3eaed47fcb9e92036f1e95ccf?format=webp&width=100";
+
 export default function InvoiceDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [invoice, setInvoice] = useState<Invoice | null>(null);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     if (!id) {
