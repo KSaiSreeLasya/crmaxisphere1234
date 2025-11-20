@@ -301,7 +301,7 @@ export default function CreateInvoice() {
                   Scope / Features
                 </h2>
                 <p className="text-sm text-gray-600 mb-6">
-                  Select features from AI Starter Package to include in this invoice
+                  Select features from {selectedPackage.name} to include in this invoice
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {selectedPackage.features.map((feature, index) => (
