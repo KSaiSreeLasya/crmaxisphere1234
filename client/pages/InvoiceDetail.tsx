@@ -532,6 +532,11 @@ export default function InvoiceDetail() {
   const dueDate = new Date(invoice.created_at);
   dueDate.setDate(dueDate.getDate() + 30);
 
+  const hasFeatures =
+    invoice.packages &&
+    (invoice.selected_features?.length > 0 ||
+      invoice.packages.features.length > 0);
+
   return (
     <Layout showSidebar={true}>
       <div className="min-h-screen bg-gray-50 p-6">
