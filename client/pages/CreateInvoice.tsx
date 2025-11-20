@@ -219,7 +219,7 @@ export default function CreateInvoice() {
     }
   };
 
-  const basePrice = selectedPackage?.price || 0;
+  const basePrice = customBasePrice ?? selectedPackage?.price ?? 0;
   const gstAmount = (basePrice * formData.gstPercentage) / 100;
   const totalAmount = basePrice + gstAmount;
 
