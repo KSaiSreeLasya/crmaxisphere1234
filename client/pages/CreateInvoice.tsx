@@ -37,6 +37,7 @@ export default function CreateInvoice() {
   const [selectedFeatures, setSelectedFeatures] = useState<Set<string>>(
     new Set(),
   );
+  const [customBasePrice, setCustomBasePrice] = useState<number | null>(null);
   const [formData, setFormData] = useState<FormData>({
     customerName: "",
     customerEmail: "",
@@ -287,7 +288,7 @@ export default function CreateInvoice() {
                       {pkg.features.slice(0, 3).map((feature, idx) => (
                         <div key={idx} className="flex items-start gap-2">
                           <span className="text-green-600 text-sm font-bold mt-0.5">
-                            ✓
+                            ���
                           </span>
                           <span className="text-xs text-gray-600">
                             {feature}
