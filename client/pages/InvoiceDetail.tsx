@@ -118,7 +118,7 @@ export default function InvoiceDetail() {
               box-sizing: border-box;
             }
             body {
-              font-family: Arial, sans-serif;
+              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
               background-color: #f5f5f5;
             }
             .page {
@@ -135,36 +135,44 @@ export default function InvoiceDetail() {
             }
             .logo-header {
               display: flex;
-              align-items: center;
+              align-items: flex-start;
               gap: 15px;
-              margin-bottom: 20px;
-              padding-bottom: 15px;
-              border-bottom: 2px solid #f0f0f0;
+              margin-bottom: 10px;
+              padding-bottom: 10px;
             }
-            .logo-circle {
-              width: 50px;
-              height: 50px;
-              background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            .logo-img {
+              width: 60px;
+              height: 60px;
               border-radius: 50%;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              color: white;
-              font-weight: bold;
-              font-size: 24px;
+              object-fit: cover;
+              flex-shrink: 0;
             }
             .company-header {
               flex: 1;
             }
             .company-header h1 {
               margin: 0;
-              font-size: 24px;
+              font-size: 28px;
+              font-weight: 700;
               color: #333;
             }
-            .company-header p {
-              margin: 2px 0;
-              color: #666;
+            .company-header .company-name {
+              font-size: 14px;
+              font-weight: 500;
+              color: #555;
+              margin-top: 4px;
+            }
+            .company-header .invoice-title {
               font-size: 12px;
+              font-weight: 400;
+              color: #666;
+              margin: 2px 0;
+            }
+            .company-address {
+              font-size: 11px;
+              color: #666;
+              line-height: 1.4;
+              margin-top: 8px;
             }
             .header {
               display: flex;
