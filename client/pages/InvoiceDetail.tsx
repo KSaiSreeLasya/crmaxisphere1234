@@ -628,7 +628,7 @@ export default function InvoiceDetail() {
                         ₹{invoice.base_price.toLocaleString("en-IN")}
                       </td>
                       <td className="text-right px-4 py-3 text-gray-900">
-                        ₹{invoice.base_price.toLocaleString("en-IN")}
+                        ���{invoice.base_price.toLocaleString("en-IN")}
                       </td>
                     </tr>
                   </tbody>
@@ -642,7 +642,10 @@ export default function InvoiceDetail() {
                     Package Scope & Features
                   </h3>
                   <div className="grid grid-cols-2 gap-4">
-                    {invoice.packages.features.map((feature, index) => (
+                    {(invoice.selected_features && invoice.selected_features.length > 0
+                      ? invoice.selected_features
+                      : invoice.packages.features
+                    ).map((feature, index) => (
                       <div
                         key={index}
                         className="flex items-start gap-3 p-3 bg-green-50 rounded-lg"
