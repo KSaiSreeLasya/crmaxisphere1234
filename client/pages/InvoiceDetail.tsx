@@ -372,10 +372,11 @@ export default function InvoiceDetail() {
 
               <!-- Header with Invoice Meta -->
               <div class="header">
-                <div></div>
+                <div class="flex-1">
+                </div>
                 <div class="invoice-meta">
                   <p class="invoice-number">Invoice Number: ${invoice.invoice_number}</p>
-                  <p><strong>Invoice Date:</strong> ${new Date(
+                  <p><strong>Date:</strong> ${new Date(
                     invoice.created_at,
                   ).toLocaleDateString("en-IN")}</p>
                   <p><strong>Due Date:</strong> ${new Date(
@@ -405,26 +406,29 @@ export default function InvoiceDetail() {
                 </div>
               </div>
 
+              <!-- Divider -->
+              <div class="divider-line"></div>
+
               <!-- Package Details -->
               <div class="section">
                 <div class="section-title">Description</div>
                 <table class="pricing-table">
                   <thead>
                     <tr>
-                      <th style="text-align: left;">Description</th>
-                      <th>Qty</th>
+                      <th>Description</th>
+                      <th style="text-align: center;">Qty</th>
                       <th>Rate</th>
                       <th>Amount</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
-                      <td style="text-align: left;">${
+                      <td>${
                         invoice.packages?.name || "Package"
                       } - Full Package</td>
-                      <td>1</td>
-                      <td>₹${invoice.base_price.toLocaleString("en-IN")}</td>
-                      <td>₹${invoice.base_price.toLocaleString("en-IN")}</td>
+                      <td style="text-align: center;">1</td>
+                      <td class="pricing-value">₹${invoice.base_price.toLocaleString("en-IN")}</td>
+                      <td class="pricing-value">₹${invoice.base_price.toLocaleString("en-IN")}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -432,31 +436,31 @@ export default function InvoiceDetail() {
 
               <!-- Pricing -->
               <div class="section">
-                <table class="pricing-table">
-                  <tbody>
-                    <tr>
-                      <td class="pricing-label">Subtotal</td>
-                      <td>₹${invoice.base_price.toLocaleString("en-IN")}</td>
-                    </tr>
-                    <tr>
-                      <td class="pricing-label">Tax (${invoice.gst_percentage}% GST)</td>
-                      <td>₹${invoice.gst_amount.toLocaleString("en-IN", {
+                <div style="display: flex; justify-content: flex-end; margin-bottom: 8px;">
+                  <div style="width: 350px;">
+                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #d1d5db; padding: 8px 0; margin-bottom: 8px;">
+                      <span class="pricing-label">Subtotal:</span>
+                      <span class="pricing-value">₹${invoice.base_price.toLocaleString("en-IN")}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #d1d5db; padding: 8px 0; margin-bottom: 8px;">
+                      <span class="pricing-label">Tax (${invoice.gst_percentage}% GST):</span>
+                      <span class="pricing-value">₹${invoice.gst_amount.toLocaleString("en-IN", {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
-                      })}</td>
-                    </tr>
-                    <tr class="total-row total-amount">
-                      <td class="pricing-label total-amount-value">Total Amount Due</td>
-                      <td class="total-amount-value">₹${invoice.total_amount.toLocaleString(
+                      })}</span>
+                    </div>
+                    <div class="total-row total-amount" style="display: flex; justify-content: space-between; padding: 8px; border-radius: 3px;">
+                      <span class="total-amount-label">Total Amount Due</span>
+                      <span class="total-amount-value">₹${invoice.total_amount.toLocaleString(
                         "en-IN",
                         {
                           minimumFractionDigits: 2,
                           maximumFractionDigits: 2,
                         },
-                      )}</td>
-                    </tr>
-                  </tbody>
-                </table>
+                      )}</span>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               ${
