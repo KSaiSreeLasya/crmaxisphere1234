@@ -330,9 +330,27 @@ export default function CreateInvoice() {
             {/* Step 2: Package Features and Details */}
             {selectedPackage && (
               <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-900 mb-6">
-                  Scope / Features
-                </h2>
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-lg font-semibold text-gray-900">
+                    Scope / Features
+                  </h2>
+                  <div className="flex gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedFeatures(new Set(selectedPackage.features))}
+                      className="px-4 py-2 text-sm font-medium bg-gray-100 text-gray-900 rounded-lg hover:bg-gray-200 transition-colors"
+                    >
+                      Select All
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedFeatures(new Set())}
+                      className="px-4 py-2 text-sm font-medium bg-gray-100 text-gray-900 rounded-lg hover:bg-gray-200 transition-colors"
+                    >
+                      Clear
+                    </button>
+                  </div>
+                </div>
                 <p className="text-sm text-gray-600 mb-6">
                   Select features from {selectedPackage.name} to include in this invoice
                 </p>
@@ -342,13 +360,34 @@ export default function CreateInvoice() {
                     selectedPackage.features.map((feature, index) => (
                       <div
                         key={index}
-                        className="flex items-start gap-3 p-3 bg-green-50 rounded-lg border border-green-100"
+                        className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
+                          selectedFeatures.has(feature)
+                            ? "bg-green-50 border-green-100"
+                            : "bg-gray-50 border-gray-200"
+                        }`}
+                        onClick={() => {
+                          const newSelected = new Set(selectedFeatures);
+                          if (newSelected.has(feature)) {
+                            newSelected.delete(feature);
+                          } else {
+                            newSelected.add(feature);
+                          }
+                          setSelectedFeatures(newSelected);
+                        }}
                       >
                         <input
                           type="checkbox"
-                          checked={true}
-                          readOnly
-                          className="mt-1 w-5 h-5 text-green-600 rounded cursor-default flex-shrink-0"
+                          checked={selectedFeatures.has(feature)}
+                          onChange={() => {
+                            const newSelected = new Set(selectedFeatures);
+                            if (newSelected.has(feature)) {
+                              newSelected.delete(feature);
+                            } else {
+                              newSelected.add(feature);
+                            }
+                            setSelectedFeatures(newSelected);
+                          }}
+                          className="mt-1 w-5 h-5 text-green-600 rounded cursor-pointer flex-shrink-0"
                         />
                         <span className="text-gray-700 text-sm">{feature}</span>
                       </div>
