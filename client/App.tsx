@@ -111,22 +111,6 @@ const AppContent = () => {
         }
       />
       <Route
-        path="/admin/analytics"
-        element={
-          <ProtectedRoute>
-            <AnalyticsDashboard />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/analytics"
-        element={
-          <ProtectedRoute>
-            <AnalyticsDashboard />
-          </ProtectedRoute>
-        }
-      />
-      <Route
         path="/admin/invoices"
         element={
           <ProtectedRoute>
