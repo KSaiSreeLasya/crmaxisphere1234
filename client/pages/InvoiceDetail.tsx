@@ -351,7 +351,6 @@ export default function InvoiceDetail() {
                 margin: 0;
                 padding: 0.5in;
                 box-shadow: none;
-                page-break-after: always;
                 width: 100%;
                 height: auto;
               }
