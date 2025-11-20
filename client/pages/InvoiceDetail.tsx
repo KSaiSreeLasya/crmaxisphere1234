@@ -322,11 +322,12 @@ export default function InvoiceDetail() {
             <div class="page-content">
               <!-- Logo and Company Header -->
               <div class="logo-header">
-                <img src="https://cdn.builder.io/api/v1/image/assets%2Fd6ed3a58ddbf4178909cabbd3ef86178%2Ffaf45679b2484f3990bc21ddcb4a6e94?format=webp&width=100" alt="Axisphere Logo" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+                <img src="${LOGO_URL}" alt="Axisphere Logo" class="logo-img">
                 <div class="company-header">
                   <h1>Axisphere</h1>
-                  <p>Axisphere Sales CRM</p>
-                  <p>Invoice Bill</p>
+                  <div class="company-name">${COMPANY_NAME}</div>
+                  <div class="invoice-title">Invoice Bill</div>
+                  <div class="company-address">${COMPANY_ADDRESS}</div>
                 </div>
               </div>
 
