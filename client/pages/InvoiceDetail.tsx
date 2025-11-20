@@ -425,7 +425,9 @@ export default function InvoiceDetail() {
 
           <!-- PAGE 2: Features (if there are features) -->
           ${
-            invoice.packages && (invoice.selected_features?.length > 0 || invoice.packages.features.length > 0)
+            invoice.packages &&
+            (invoice.selected_features?.length > 0 ||
+              invoice.packages.features.length > 0)
               ? `
           <div class="page">
             <div class="page-content">
@@ -448,7 +450,8 @@ export default function InvoiceDetail() {
               <div class="section">
                 <div class="section-title">Package Scope & Features</div>
                 <div class="features-grid">
-                  ${(invoice.selected_features && invoice.selected_features.length > 0
+                  ${(invoice.selected_features &&
+                  invoice.selected_features.length > 0
                     ? invoice.selected_features
                     : invoice.packages.features
                   )
@@ -642,7 +645,8 @@ export default function InvoiceDetail() {
                     Package Scope & Features
                   </h3>
                   <div className="grid grid-cols-2 gap-4">
-                    {(invoice.selected_features && invoice.selected_features.length > 0
+                    {(invoice.selected_features &&
+                    invoice.selected_features.length > 0
                       ? invoice.selected_features
                       : invoice.packages.features
                     ).map((feature, index) => (

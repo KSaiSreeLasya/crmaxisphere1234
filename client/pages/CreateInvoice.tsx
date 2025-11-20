@@ -34,7 +34,9 @@ export default function CreateInvoice() {
   const [showPackageDropdown, setShowPackageDropdown] = useState(false);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [selectedFeatures, setSelectedFeatures] = useState<Set<string>>(new Set());
+  const [selectedFeatures, setSelectedFeatures] = useState<Set<string>>(
+    new Set(),
+  );
   const [formData, setFormData] = useState<FormData>({
     customerName: "",
     customerEmail: "",
@@ -338,7 +340,9 @@ export default function CreateInvoice() {
                   <div className="flex gap-3">
                     <button
                       type="button"
-                      onClick={() => setSelectedFeatures(new Set(selectedPackage.features))}
+                      onClick={() =>
+                        setSelectedFeatures(new Set(selectedPackage.features))
+                      }
                       className="px-4 py-2 text-sm font-medium bg-gray-100 text-gray-900 rounded-lg hover:bg-gray-200 transition-colors"
                     >
                       Select All
@@ -353,7 +357,8 @@ export default function CreateInvoice() {
                   </div>
                 </div>
                 <p className="text-sm text-gray-600 mb-6">
-                  Select features from {selectedPackage.name} to include in this invoice
+                  Select features from {selectedPackage.name} to include in this
+                  invoice
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {Array.isArray(selectedPackage.features) &&
