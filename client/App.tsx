@@ -66,14 +66,6 @@ const AppContent = () => {
         path="/admin/sales-persons"
         element={
           <ProtectedRoute>
-            <AdminDashboard />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/admin/sales-persons/add"
-        element={
-          <ProtectedRoute>
             <AddSalesPersonPage />
           </ProtectedRoute>
         }
