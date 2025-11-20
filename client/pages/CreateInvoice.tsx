@@ -253,6 +253,7 @@ export default function CreateInvoice() {
                     key={pkg.id}
                     onClick={() => {
                       setSelectedPackage(pkg);
+                      setSelectedFeatures(new Set(pkg.features));
                       setFormData((prev) => ({
                         ...prev,
                         packageId: pkg.id,
