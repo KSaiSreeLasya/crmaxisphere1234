@@ -613,7 +613,7 @@ export default function InvoiceDetail() {
                   <img
                     src={LOGO_URL}
                     alt="Axisphere Logo"
-                    className="w-16 h-16 rounded-full object-cover flex-shrink-0"
+                    className="h-16 flex-shrink-0"
                   />
                   <div className="flex-1">
                     <h1 className="text-4xl font-bold text-gray-900">
@@ -789,7 +789,7 @@ export default function InvoiceDetail() {
                   <img
                     src={LOGO_URL}
                     alt="Axisphere Logo"
-                    className="w-16 h-16 rounded-full object-cover flex-shrink-0"
+                    className="h-16 flex-shrink-0"
                   />
                   <div className="flex-1">
                     <h1 className="text-4xl font-bold text-gray-900">
