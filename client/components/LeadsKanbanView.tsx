@@ -515,7 +515,7 @@ export default function LeadsKanbanView() {
           setActiveId(event.active.id as string);
         }}
       >
-        <div className="flex gap-2 overflow-x-auto pb-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-2">
           {statuses.map((status) => {
             const statusLeads = leads.filter((l) => l.status_id === status.id);
             return (
