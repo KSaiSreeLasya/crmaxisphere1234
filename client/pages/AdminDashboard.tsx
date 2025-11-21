@@ -119,8 +119,17 @@ export default function AdminDashboard() {
     return colorMap[status.color] || "bg-gray-100 text-gray-800";
   };
 
-  const assignedLeads = leads.filter((l) => l.assigned_to === user?.id).length;
-  const upcomingReminders = 0;
+  const userLeads = leads.filter((l) => l.assigned_to === user?.id);
+  const assignedLeads = userLeads.length;
+
+  const upcomingReminders = userLeads.filter((lead) => {
+    if (!lead.next_reminder) return false;
+    const reminderDate = new Date(lead.next_reminder);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    reminderDate.setHours(0, 0, 0, 0);
+    return reminderDate >= today && reminderDate <= new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+  }).length;
 
   if (loading) {
     return (
