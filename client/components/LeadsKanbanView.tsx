@@ -88,7 +88,7 @@ function DraggableLeadCard({
     <div
       ref={setNodeRef}
       style={style}
-      className={`bg-white p-4 rounded-lg border-2 border-gray-200 cursor-grab active:cursor-grabbing shadow-sm hover:shadow-md transition-all ${
+      className={`bg-white p-3 rounded-lg border-2 border-gray-200 cursor-grab active:cursor-grabbing shadow-sm hover:shadow-md transition-all ${
         isDragging ? "opacity-50 shadow-lg" : ""
       }`}
       {...attributes}
@@ -163,21 +163,21 @@ function KanbanColumn({
   return (
     <div
       ref={setNodeRef}
-      className={`flex-shrink-0 w-48 rounded-lg border-2 ${getStatusColor(
+      className={`flex-shrink-0 w-36 rounded-lg border-2 ${getStatusColor(
         status.color,
       )} flex flex-col`}
     >
-      <div className={`${getHeaderBgColor(status.color)} p-4 rounded-t-lg`}>
+      <div className={`${getHeaderBgColor(status.color)} p-3 rounded-t-lg`}>
         <div className="flex items-center justify-between">
-          <h2 className="font-semibold text-foreground text-sm">
+          <h2 className="font-semibold text-foreground text-xs">
             {status.name}
           </h2>
-          <span className="bg-white px-2 py-1 rounded text-xs font-bold text-foreground">
+          <span className="bg-white px-1.5 py-0.5 rounded text-xs font-bold text-foreground">
             {leads.length}
           </span>
         </div>
       </div>
-      <div className="flex-1 p-4 overflow-y-auto space-y-3 min-h-72">
+      <div className="flex-1 p-3 overflow-y-auto space-y-2 min-h-72">
         <SortableContext
           items={leads.map((l) => l.id)}
           strategy={verticalListSortingStrategy}
@@ -515,7 +515,7 @@ export default function LeadsKanbanView() {
           setActiveId(event.active.id as string);
         }}
       >
-        <div className="flex gap-3 overflow-x-auto pb-4">
+        <div className="flex gap-2 overflow-x-auto pb-4">
           {statuses.map((status) => {
             const statusLeads = leads.filter((l) => l.status_id === status.id);
             return (
@@ -534,7 +534,7 @@ export default function LeadsKanbanView() {
         <DragOverlay>
           {activeId
             ? leads.find((l) => l.id === activeId) && (
-                <div className="bg-white p-4 rounded-lg border-2 border-gray-200 shadow-xl opacity-75 w-48">
+                <div className="bg-white p-3 rounded-lg border-2 border-gray-200 shadow-xl opacity-75 w-36">
                   <h3 className="font-semibold text-sm text-foreground">
                     {leads.find((l) => l.id === activeId)?.name}
                   </h3>
