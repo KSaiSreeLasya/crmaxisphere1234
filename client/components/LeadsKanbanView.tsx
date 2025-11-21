@@ -163,7 +163,7 @@ function KanbanColumn({
   return (
     <div
       ref={setNodeRef}
-      className={`flex-shrink-0 w-36 rounded-lg border-2 ${getStatusColor(
+      className={`rounded-lg border-2 ${getStatusColor(
         status.color,
       )} flex flex-col`}
     >
