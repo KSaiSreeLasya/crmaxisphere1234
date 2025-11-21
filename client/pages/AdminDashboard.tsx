@@ -77,6 +77,18 @@ export default function AdminDashboard() {
         .from("lead_status_pipeline")
         .select("*");
       if (statusData) setStatuses(statusData);
+
+      // Fetch current sales person if user is a sales person
+      if (user?.role === "sales" && user?.id) {
+        const { data: spData } = await supabase
+          .from("sales_persons")
+          .select("id, name")
+          .eq("user_id", user.id)
+          .single();
+        if (spData) {
+          setCurrentSalesPerson(spData);
+        }
+      }
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
