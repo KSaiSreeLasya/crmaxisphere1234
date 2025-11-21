@@ -204,7 +204,7 @@ export default function AdminDashboard() {
           </div>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
             {/* My Assigned Leads */}
             <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
               <div className="flex items-center justify-between mb-4">
@@ -251,7 +251,7 @@ export default function AdminDashboard() {
               <h2 className="text-lg font-semibold text-gray-900 mb-6">
                 Upcoming Reminders (Next 7 Days)
               </h2>
-              <div className="space-y-3">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {userLeads
                   .filter((lead) => {
                     if (!lead.next_reminder) return false;

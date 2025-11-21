@@ -85,7 +85,7 @@ export default function Layout({ children, showSidebar = true }: LayoutProps) {
             <img
               src="https://cdn.builder.io/api/v1/image/assets%2F3c998b3ff9204c11af8b6ffa6ad40d16%2F574ca4298f33463c885f85248ad393f4?format=webp&width=800"
               alt="Axisphere"
-              className="w-10 h-10"
+              className="w-16 h-16"
             />
             <span className="font-bold text-lg text-foreground hidden sm:block">
               AXISPHERE CRM
