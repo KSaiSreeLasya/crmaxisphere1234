@@ -332,7 +332,7 @@ export default function LeadsKanbanView() {
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
-      distance: 8,
+      distance: { x: 8, y: 8 },
     }),
   );
 
