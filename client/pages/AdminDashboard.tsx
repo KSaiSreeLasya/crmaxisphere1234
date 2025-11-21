@@ -150,9 +150,16 @@ export default function AdminDashboard() {
     if (!lead.next_reminder) return false;
     const reminderDate = new Date(lead.next_reminder);
     const today = new Date();
+
+    // Set to start of day for comparison
     today.setHours(0, 0, 0, 0);
     reminderDate.setHours(0, 0, 0, 0);
-    return reminderDate >= today && reminderDate <= new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+    // Check if reminder is today or within next 7 days
+    const sevenDaysFromNow = new Date(today);
+    sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
+
+    return reminderDate >= today && reminderDate <= sevenDaysFromNow;
   }).length;
 
   if (loading) {
