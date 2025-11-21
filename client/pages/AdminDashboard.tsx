@@ -409,6 +409,150 @@ export default function AdminDashboard() {
               </div>
             </div>
           </div>
+
+          {/* Assigned Leads Section */}
+          {assignedLeads > 0 && (
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+              <h2 className="text-lg font-semibold text-gray-900 mb-6">
+                My Assigned Leads ({assignedLeads})
+              </h2>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-900">
+                        Name
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-900">
+                        Company
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-900">
+                        Status
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-900">
+                        Next Reminder
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-900">
+                        Reassign To
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {userLeads.map((lead) => {
+                      const status = statuses.find((s) => s.id === lead.status_id);
+                      return (
+                        <tr key={lead.id} className="hover:bg-gray-50">
+                          <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                            {lead.name}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-600">
+                            {lead.company}
+                          </td>
+                          <td className="px-6 py-4 text-sm">
+                            <span
+                              className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(
+                                lead.status_id,
+                              )}`}
+                            >
+                              {status?.name || "Unknown"}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-600">
+                            {lead.next_reminder
+                              ? new Date(lead.next_reminder).toLocaleDateString()
+                              : "-"}
+                          </td>
+                          <td className="px-6 py-4 text-sm">
+                            {reassigningLeadId === lead.id ? (
+                              <select
+                                defaultValue=""
+                                onChange={(e) => {
+                                  if (e.target.value) {
+                                    handleReassignLead(lead.id, e.target.value);
+                                  }
+                                }}
+                                className="px-2 py-1 border border-gray-300 rounded text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              >
+                                <option value="">Select person...</option>
+                                {salesPersons
+                                  .filter((sp) => sp.id !== lead.assigned_to)
+                                  .map((sp) => (
+                                    <option key={sp.id} value={sp.id}>
+                                      {sp.name}
+                                    </option>
+                                  ))}
+                              </select>
+                            ) : (
+                              <button
+                                onClick={() => setReassigningLeadId(lead.id)}
+                                className="inline-flex items-center gap-1 px-3 py-1 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded"
+                              >
+                                <ArrowRight className="w-3 h-3" />
+                                Reassign
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* Upcoming Reminders Section */}
+          {upcomingReminders > 0 && (
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+              <h2 className="text-lg font-semibold text-gray-900 mb-6">
+                Upcoming Reminders (Next 7 Days)
+              </h2>
+              <div className="space-y-3">
+                {userLeads
+                  .filter((lead) => {
+                    if (!lead.next_reminder) return false;
+                    const reminderDate = new Date(lead.next_reminder);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    reminderDate.setHours(0, 0, 0, 0);
+                    return (
+                      reminderDate >= today &&
+                      reminderDate <=
+                        new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000)
+                    );
+                  })
+                  .sort((a, b) => {
+                    const dateA = new Date(a.next_reminder || "").getTime();
+                    const dateB = new Date(b.next_reminder || "").getTime();
+                    return dateA - dateB;
+                  })
+                  .map((lead) => (
+                    <div
+                      key={lead.id}
+                      className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-2 h-2 bg-orange-400 rounded-full" />
+                        <div>
+                          <p className="font-medium text-gray-900">
+                            {lead.name}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            {lead.company}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-medium text-gray-900">
+                          {new Date(lead.next_reminder!).toLocaleDateString()}
+                        </p>
+                        <p className="text-xs text-gray-500">Reminder Date</p>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </Layout>
