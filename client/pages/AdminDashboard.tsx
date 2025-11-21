@@ -55,6 +55,7 @@ export default function AdminDashboard() {
   const [statuses, setStatuses] = useState<LeadStatus[]>([]);
   const [loading, setLoading] = useState(true);
   const [reassigningLeadId, setReassigningLeadId] = useState<string | null>(null);
+  const [currentSalesPerson, setCurrentSalesPerson] = useState<CurrentSalesPerson | null>(null);
 
   useEffect(() => {
     if (!user) {
