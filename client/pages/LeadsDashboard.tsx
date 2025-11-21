@@ -125,6 +125,42 @@ export default function LeadsDashboard() {
     }
   };
 
+  const handleSelectLead = (lead: Lead) => {
+    setSelectedLead(lead);
+    setDialogOpen(true);
+  };
+
+  const handleStatusChange = async (leadId: string, statusId: string) => {
+    try {
+      await supabase
+        .from("leads")
+        .update({ status_id: statusId })
+        .eq("id", leadId);
+
+      setLeads((prevLeads) =>
+        prevLeads.map((l) =>
+          l.id === leadId ? { ...l, status_id: statusId } : l,
+        ),
+      );
+
+      setSelectedLead((prev) =>
+        prev ? { ...prev, status_id: statusId } : null,
+      );
+
+      toast({
+        title: "Success",
+        description: "Lead status updated successfully.",
+      });
+    } catch (error) {
+      console.error("Error updating status:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update status.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleAutoAssign = async () => {
     setAutoAssignLoading(true);
     try {
