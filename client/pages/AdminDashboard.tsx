@@ -204,7 +204,7 @@ export default function AdminDashboard() {
           </div>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
             {/* My Assigned Leads */}
             <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
               <div className="flex items-center justify-between mb-4">
@@ -251,7 +251,7 @@ export default function AdminDashboard() {
               <h2 className="text-lg font-semibold text-gray-900 mb-6">
                 Upcoming Reminders (Next 7 Days)
               </h2>
-              <div className="space-y-3">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {userLeads
                   .filter((lead) => {
                     if (!lead.next_reminder) return false;
@@ -496,11 +496,11 @@ export default function AdminDashboard() {
           </div>
 
           {/* Quick Stats */}
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 mb-12">
             <h2 className="text-lg font-semibold text-gray-900 mb-6">
               Quick Stats
             </h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               <div className="text-center">
                 <p className="text-3xl font-bold text-gray-900">
                   {leads.length}
@@ -544,7 +544,7 @@ export default function AdminDashboard() {
 
           {/* Assigned Leads Section */}
           {assignedLeads > 0 && (
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 mb-8">
               <h2 className="text-lg font-semibold text-gray-900 mb-6">
                 My Assigned Leads ({assignedLeads})
               </h2>
