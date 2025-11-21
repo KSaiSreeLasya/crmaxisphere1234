@@ -496,7 +496,7 @@ export default function AdminDashboard() {
           </div>
 
           {/* Quick Stats */}
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 mb-12">
             <h2 className="text-lg font-semibold text-gray-900 mb-6">
               Quick Stats
             </h2>
@@ -544,7 +544,7 @@ export default function AdminDashboard() {
 
           {/* Assigned Leads Section */}
           {assignedLeads > 0 && (
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 mb-8">
               <h2 className="text-lg font-semibold text-gray-900 mb-6">
                 My Assigned Leads ({assignedLeads})
               </h2>
