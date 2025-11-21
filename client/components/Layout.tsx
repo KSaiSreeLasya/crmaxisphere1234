@@ -16,6 +16,14 @@ interface LayoutProps {
   showSidebar?: boolean;
 }
 
+interface NavItem {
+  label: string;
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+  adminOnly?: boolean;
+  salesOnly?: boolean;
+}
+
 export default function Layout({ children, showSidebar = true }: LayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
