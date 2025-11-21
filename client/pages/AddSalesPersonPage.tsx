@@ -215,6 +215,84 @@ export default function AddSalesPersonPage() {
     }
   };
 
+  const handleEditStart = (person: ExistingSalesPerson) => {
+    setEditingId(person.id);
+    setEditForm({
+      name: person.name,
+      email: person.email,
+      phone: person.phone,
+      status: person.status,
+    });
+  };
+
+  const handleEditCancel = () => {
+    setEditingId(null);
+    setEditForm({});
+  };
+
+  const handleEditSave = async (id: string) => {
+    if (!editForm.name?.trim() || !editForm.email?.trim() || !editForm.phone?.trim()) {
+      toast({
+        title: "Error",
+        description: "Please fill in all required fields",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const updateData: Record<string, any> = {
+        name: editForm.name,
+        email: editForm.email,
+        phone: editForm.phone,
+        status: editForm.status,
+      };
+
+      if (editForm.password && editForm.password.length >= 6) {
+        const { data: spData } = await supabase
+          .from("sales_persons")
+          .select("user_id")
+          .eq("id", id)
+          .single();
+
+        if (spData?.user_id) {
+          const { error: userError } = await supabase
+            .from("users")
+            .update({ password_hash: editForm.password })
+            .eq("id", spData.user_id);
+
+          if (userError) throw userError;
+        }
+      }
+
+      const { error } = await supabase
+        .from("sales_persons")
+        .update(updateData)
+        .eq("id", id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Sales person updated successfully",
+      });
+
+      setEditingId(null);
+      setEditForm({});
+      await fetchSalesPersons();
+    } catch (error) {
+      console.error("Error updating sales person:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update sales person",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Layout showSidebar={true}>
       <div className="min-h-screen bg-background p-6">
