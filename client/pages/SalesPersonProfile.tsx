@@ -29,6 +29,7 @@ export default function SalesPersonProfile() {
   const [isSaving, setIsSaving] = useState(false);
   const [loading, setLoading] = useState(true);
   const [editForm, setEditForm] = useState<Partial<SalesPersonData>>({});
+  const [otherSalesPersons, setOtherSalesPersons] = useState<OtherSalesPerson[]>([]);
 
   useEffect(() => {
     fetchSalesPersonData();
