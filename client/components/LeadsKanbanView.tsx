@@ -161,7 +161,7 @@ function KanbanColumn({
   return (
     <div
       ref={setNodeRef}
-      className={`flex-shrink-0 w-80 rounded-lg border-2 ${getStatusColor(
+      className={`flex-shrink-0 w-48 rounded-lg border-2 ${getStatusColor(
         status.color,
       )} flex flex-col`}
     >
@@ -502,7 +502,7 @@ export default function LeadsKanbanView() {
           setActiveId(event.active.id as string);
         }}
       >
-        <div className="flex gap-6 overflow-x-auto pb-4">
+        <div className="flex gap-3 overflow-x-auto pb-4">
           {statuses.map((status) => {
             const statusLeads = leads.filter((l) => l.status_id === status.id);
             return (
@@ -521,7 +521,7 @@ export default function LeadsKanbanView() {
         <DragOverlay>
           {activeId
             ? leads.find((l) => l.id === activeId) && (
-                <div className="bg-white p-4 rounded-lg border-2 border-gray-200 shadow-xl opacity-75 w-80">
+                <div className="bg-white p-4 rounded-lg border-2 border-gray-200 shadow-xl opacity-75 w-48">
                   <h3 className="font-semibold text-sm text-foreground">
                     {leads.find((l) => l.id === activeId)?.name}
                   </h3>
