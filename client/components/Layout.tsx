@@ -34,7 +34,11 @@ export default function Layout({ children, showSidebar = true }: LayoutProps) {
       label: "Dashboard",
       href: "/admin",
       icon: BarChart3,
-      adminOnly: true,
+    },
+    {
+      label: "Leads",
+      href: user?.role === "admin" ? "/admin/leads" : "/leads",
+      icon: TrendingUp,
     },
     {
       label: "Sales Person",
@@ -47,11 +51,6 @@ export default function Layout({ children, showSidebar = true }: LayoutProps) {
       href: "/admin/sales-persons",
       icon: Users,
       adminOnly: true,
-    },
-    {
-      label: "Leads",
-      href: user?.role === "admin" ? "/admin/leads" : "/leads",
-      icon: TrendingUp,
     },
     {
       label: "Invoices",
