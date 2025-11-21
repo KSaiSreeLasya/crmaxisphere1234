@@ -100,7 +100,7 @@ export default function Layout({ children, showSidebar = true }: LayoutProps) {
 
         {/* Top Navigation Tabs */}
         {showSidebar && (
-          <nav className="hidden md:flex items-center gap-1 px-6 bg-white overflow-x-auto">
+          <nav className="hidden md:flex items-center justify-center gap-1 px-6 bg-white overflow-x-auto">
             {navItems.map((item) => {
               const Icon = item.icon;
               return (
