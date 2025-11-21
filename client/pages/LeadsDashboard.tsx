@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
+import LeadsKanbanView from "@/components/LeadsKanbanView";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
@@ -13,6 +15,7 @@ import {
   Edit,
   Trash2,
   Users,
+  LayoutGrid,
 } from "lucide-react";
 
 interface LeadStatus {
@@ -282,103 +285,126 @@ export default function LeadsDashboard() {
           </div>
         </div>
 
-        {/* Leads Table */}
-        {leads.length > 0 ? (
-          <div className="bg-white border border-border rounded-lg overflow-hidden shadow-sm">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50 border-b border-border">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-foreground">
-                      Name
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-foreground">
-                      Company
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-foreground">
-                      Status
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-foreground">
-                      Assigned To
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-foreground">
-                      Note
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-foreground">
-                      Next Reminder
-                    </th>
-                    <th className="px-6 py-3 text-right text-xs font-semibold text-foreground">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {leads.map((lead) => (
-                    <tr
-                      key={lead.id}
-                      className="hover:bg-gray-50 transition-colors"
-                    >
-                      <td className="px-6 py-4 text-sm font-medium text-foreground">
-                        {lead.name}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-foreground">
-                        {lead.company}
-                      </td>
-                      <td className="px-6 py-4 text-sm">
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs font-semibold ${getStatusBadgeClass(
-                            lead.status_id,
-                          )}`}
+        {/* Tabs for switching between table and kanban views */}
+        <Tabs defaultValue="kanban" className="w-full">
+          <TabsList className="grid w-full max-w-md grid-cols-2 mb-6">
+            <TabsTrigger value="kanban" className="flex items-center gap-2">
+              <LayoutGrid className="w-4 h-4" />
+              <span>Leads Dashboard</span>
+            </TabsTrigger>
+            <TabsTrigger value="table" className="flex items-center gap-2">
+              <TrendingUp className="w-4 h-4" />
+              <span>Leads</span>
+            </TabsTrigger>
+          </TabsList>
+
+          {/* Kanban View */}
+          <TabsContent value="kanban" className="w-full">
+            <LeadsKanbanView />
+          </TabsContent>
+
+          {/* Table View */}
+          <TabsContent value="table" className="w-full">
+            {leads.length > 0 ? (
+              <div className="bg-white border border-border rounded-lg overflow-hidden shadow-sm">
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-gray-50 border-b border-border">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-foreground">
+                          Name
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-foreground">
+                          Company
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-foreground">
+                          Status
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-foreground">
+                          Assigned To
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-foreground">
+                          Note
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-foreground">
+                          Next Reminder
+                        </th>
+                        <th className="px-6 py-3 text-right text-xs font-semibold text-foreground">
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border">
+                      {leads.map((lead) => (
+                        <tr
+                          key={lead.id}
+                          className="hover:bg-gray-50 transition-colors"
                         >
-                          {getStatusName(lead.status_id)}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-sm text-foreground">
-                        {getSalesPersonName(lead.assigned_to)}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-foreground max-w-xs truncate">
-                        {lead.note || lead.notes || "-"}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-foreground">
-                        {lead.next_reminder
-                          ? new Date(lead.next_reminder).toLocaleDateString()
-                          : "-"}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-right space-x-2">
-                        <button
-                          onClick={() => navigate(`/leads/edit/${lead.id}`)}
-                          className="inline-flex items-center gap-1 px-3 py-1 border border-input text-foreground rounded hover:bg-secondary text-xs transition-colors font-medium"
-                        >
-                          <Edit className="w-3 h-3" />
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDeleteLead(lead.id)}
-                          className="inline-flex items-center gap-1 px-3 py-1 border border-destructive text-destructive rounded hover:bg-destructive/10 text-xs transition-colors font-medium"
-                        >
-                          <Trash2 className="w-3 h-3" />
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        ) : (
-          <div className="text-center py-12">
-            <TrendingUp className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-            <p className="text-muted-foreground mb-4">No leads yet</p>
-            <button
-              onClick={() => navigate("/leads/add")}
-              className="inline-flex items-center gap-2 px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90"
-            >
-              <Plus className="w-5 h-5" />
-              Add Your First Lead
-            </button>
-          </div>
-        )}
+                          <td className="px-6 py-4 text-sm font-medium text-foreground">
+                            {lead.name}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-foreground">
+                            {lead.company}
+                          </td>
+                          <td className="px-6 py-4 text-sm">
+                            <span
+                              className={`px-2 py-1 rounded-full text-xs font-semibold ${getStatusBadgeClass(
+                                lead.status_id,
+                              )}`}
+                            >
+                              {getStatusName(lead.status_id)}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 text-sm text-foreground">
+                            {getSalesPersonName(lead.assigned_to)}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-foreground max-w-xs truncate">
+                            {lead.note || lead.notes || "-"}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-foreground">
+                            {lead.next_reminder
+                              ? new Date(
+                                  lead.next_reminder,
+                                ).toLocaleDateString()
+                              : "-"}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-right space-x-2">
+                            <button
+                              onClick={() => navigate(`/leads/edit/${lead.id}`)}
+                              className="inline-flex items-center gap-1 px-3 py-1 border border-input text-foreground rounded hover:bg-secondary text-xs transition-colors font-medium"
+                            >
+                              <Edit className="w-3 h-3" />
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeleteLead(lead.id)}
+                              className="inline-flex items-center gap-1 px-3 py-1 border border-destructive text-destructive rounded hover:bg-destructive/10 text-xs transition-colors font-medium"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <TrendingUp className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
+                <p className="text-muted-foreground mb-4">No leads yet</p>
+                <button
+                  onClick={() => navigate("/leads/add")}
+                  className="inline-flex items-center gap-2 px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90"
+                >
+                  <Plus className="w-5 h-5" />
+                  Add Your First Lead
+                </button>
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
       </div>
     </Layout>
   );
