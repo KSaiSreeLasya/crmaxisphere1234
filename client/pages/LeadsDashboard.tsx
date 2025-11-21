@@ -606,8 +606,7 @@ function LeadDetailDialog({
       });
 
       setIsEditing(false);
-      // Refresh the dialog with updated data
-      window.location.reload();
+      onLeadsChange?.();
     } catch (error) {
       console.error("Error updating lead:", error);
       toast({
