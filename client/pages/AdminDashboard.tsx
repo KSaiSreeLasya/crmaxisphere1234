@@ -56,7 +56,7 @@ export default function AdminDashboard() {
       return;
     }
     fetchData();
-  }, [user?.id]);
+  }, [user?.id, user]);
 
   const fetchData = async () => {
     try {
