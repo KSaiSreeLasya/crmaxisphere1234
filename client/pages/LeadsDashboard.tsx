@@ -614,15 +614,32 @@ function LeadDetailDialog({
               <DialogTitle className="text-2xl">{lead.name}</DialogTitle>
               <DialogDescription>{lead.company}</DialogDescription>
             </div>
-            {!isEditing && (
-              <button
-                onClick={handleEditClick}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 font-medium"
-              >
-                <Edit className="w-4 h-4" />
-                Edit
-              </button>
-            )}
+            <div className="flex gap-2">
+              {!isEditing && (
+                <>
+                  <button
+                    onClick={handleEditClick}
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 font-medium"
+                  >
+                    <Edit className="w-4 h-4" />
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => {
+                      setDialogOpen(false);
+                      setTimeout(
+                        () => handleDeleteLead(lead.id),
+                        300
+                      );
+                    }}
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-destructive text-destructive-foreground rounded-lg hover:opacity-90 font-medium"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    Delete
+                  </button>
+                </>
+              )}
+            </div>
           </div>
         </DialogHeader>
 
