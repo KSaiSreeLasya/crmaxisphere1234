@@ -175,7 +175,7 @@ function KanbanColumn({
           </span>
         </div>
       </div>
-      <div className="flex-1 p-4 overflow-y-auto space-y-3 min-h-96">
+      <div className="flex-1 p-4 overflow-y-auto space-y-3 min-h-72">
         <SortableContext
           items={leads.map((l) => l.id)}
           strategy={verticalListSortingStrategy}
