@@ -351,7 +351,7 @@ export default function LeadsDashboard() {
           </TabsContent>
 
           {/* Table View */}
-          <TabsContent value="table" className="w-full">
+          <TabsContent value="table" className="w-full" onClick={() => setDialogOpen(false)}>
             {leads.length > 0 ? (
               <div className="bg-white border border-border rounded-lg overflow-hidden shadow-sm">
                 <div className="overflow-x-auto">
