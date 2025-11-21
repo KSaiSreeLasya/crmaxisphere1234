@@ -135,18 +135,19 @@ export default function InvoiceDetail() {
             }
             .logo-header {
               display: flex;
+              flex-direction: column;
               align-items: flex-start;
-              gap: 15px;
+              gap: 12px;
               margin-bottom: 10px;
               padding-bottom: 10px;
             }
             .logo-img {
               height: 50px;
-              flex-shrink: 0;
+              width: auto;
               object-fit: contain;
             }
             .company-header {
-              flex: 1;
+              width: 100%;
             }
             .company-header h1 {
               margin: 0;
@@ -446,7 +447,7 @@ export default function InvoiceDetail() {
                     </div>
                     <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #d1d5db; padding: 8px 0; margin-bottom: 8px;">
                       <span class="pricing-label">Tax (${invoice.gst_percentage}% GST):</span>
-                      <span class="pricing-value">₹${invoice.gst_amount.toLocaleString(
+                      <span class="pricing-value">���${invoice.gst_amount.toLocaleString(
                         "en-IN",
                         {
                           minimumFractionDigits: 2,
