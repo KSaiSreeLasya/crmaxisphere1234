@@ -127,12 +127,35 @@ export default function LeadsDashboard() {
     }
   };
 
-  const handleDeleteLead = async (leadId: string) => {
+  const handleDeleteLead = (leadId: string) => {
+    setLeadToDelete(leadId);
+    setDeleteConfirmOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!leadToDelete) return;
+
     try {
-      await supabase.from("leads").delete().eq("id", leadId);
+      await supabase.from("leads").delete().eq("id", leadToDelete);
+      toast({
+        title: "Success",
+        description: "Lead deleted successfully.",
+      });
       fetchLeads();
+      if (selectedLead?.id === leadToDelete) {
+        setDialogOpen(false);
+        setSelectedLead(null);
+      }
     } catch (error) {
       console.error("Error deleting lead:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete lead.",
+        variant: "destructive",
+      });
+    } finally {
+      setDeleteConfirmOpen(false);
+      setLeadToDelete(null);
     }
   };
 
