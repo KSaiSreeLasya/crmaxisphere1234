@@ -97,8 +97,22 @@ export default function Login() {
           </form>
 
           {/* Demo Credentials */}
-          
-          </div>
+          {/* <div className="mt-6 pt-6 border-t border-border">
+            <p className="text-sm text-muted-foreground mb-3 font-medium">
+              Admin Credentials:
+            </p>
+            <div className="space-y-2 text-xs text-muted-foreground bg-secondary/50 p-3 rounded-lg">
+              <p>
+                <strong>Email:</strong> admin@axisphere.in
+              </p>
+              <p>
+                <strong>Password:</strong> admin2024
+              </p>
+              <p className="mt-2 text-xs">
+                Sales persons can login with credentials created by admin.
+              </p>
+            </div>
+          </div> */}
         </div>
       </div>
     </div>
